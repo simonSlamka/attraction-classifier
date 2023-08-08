@@ -1,0 +1,38 @@
+Resolving data files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3371/3371 [00:00<00:00, 23492.52it/s]
+Found cached dataset imagefolder (/home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f)
+Loading cached split indices for dataset at /home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f/cache-0b4a8a602117c2d7.arrow and /home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f/cache-89c7b4019dbe549b.arrow
+Train: 2696 | Test: 675
+Some weights of ViTForImageClassification were not initialized from the model checkpoint at google/vit-base-patch16-224-in21k and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+  0%|                                                                                                                                                                                                        | 0/126 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/simtoon/git/attraction_classifier/train.py", line 109, in <module>
+    trainer.train()
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/transformers/trainer.py", line 1539, in train
+    return inner_training_loop(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/transformers/trainer.py", line 1787, in _inner_training_loop
+    for step, inputs in enumerate(epoch_iterator):
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/accelerate/data_loader.py", line 384, in __iter__
+    current_batch = next(dataloader_iter)
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 633, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 677, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/torch/utils/data/_utils/fetch.py", line 54, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/transformers/data/data_collator.py", line 102, in __call__
+    return default_data_collator(features, return_tensors)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/transformers/data/data_collator.py", line 70, in default_data_collator
+    return torch_default_data_collator(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/transformers/data/data_collator.py", line 132, in torch_default_data_collator
+    batch[k] = torch.stack([f[k] for f in features])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: stack expects each tensor to be equal size, but got [3, 600, 400] at entry 0 and [3, 566, 375] at entry 6

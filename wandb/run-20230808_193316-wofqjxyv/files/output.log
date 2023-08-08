@@ -1,0 +1,24 @@
+Resolving data files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3371/3371 [00:00<00:00, 26655.43it/s]
+Found cached dataset imagefolder (/home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f)
+Loading cached split indices for dataset at /home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f/cache-0b4a8a602117c2d7.arrow and /home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f/cache-89c7b4019dbe549b.arrow
+Traceback (most recent call last):
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/PIL/Image.py", line 3240, in open
+    fp.seek(0)
+    ^^^^^^^
+AttributeError: 'dict' object has no attribute 'seek'
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/home/simtoon/git/attraction_classifier/train.py", line 43, in <module>
+    trainPaths = [toPNG(image) for image in ds["train"]]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/train.py", line 43, in <listcomp>
+    trainPaths = [toPNG(image) for image in ds["train"]]
+                  ^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/train.py", line 32, in toPNG
+    with Image.open(image) as img:
+         ^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/PIL/Image.py", line 3242, in open
+    fp = io.BytesIO(fp.read())
+                    ^^^^^^^
+AttributeError: 'dict' object has no attribute 'read'
+Train: 2696 | Test: 675

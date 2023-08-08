@@ -1,0 +1,205 @@
+{
+    "os": "Linux-5.10.0-22-amd64-x86_64-with-glibc2.36",
+    "python": "3.11.1",
+    "heartbeatAt": "2023-08-08T18:04:15.168530",
+    "startedAt": "2023-08-08T18:04:13.888614",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/simtoon/git/attraction_classifier/train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": null,
+        "commit": null
+    },
+    "email": "51794014+simonSlamka@users.noreply.github.com",
+    "root": "/home/simtoon/git/attraction_classifier",
+    "host": "TheHornyPrincess",
+    "username": "simtoon",
+    "executable": "/home/simtoon/git/attraction_classifier/venv/bin/python",
+    "cpu_count": 16,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 2717.1088125,
+        "min": 2200.0,
+        "max": 6222.265125
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2913.236,
+            "min": 2200.0,
+            "max": 6614.062
+        },
+        {
+            "current": 2870.078,
+            "min": 2200.0,
+            "max": 7075.585
+        },
+        {
+            "current": 2892.882,
+            "min": 2200.0,
+            "max": 6308.593
+        },
+        {
+            "current": 4242.484,
+            "min": 2200.0,
+            "max": 7228.32
+        },
+        {
+            "current": 3048.108,
+            "min": 2200.0,
+            "max": 6766.796
+        },
+        {
+            "current": 2857.089,
+            "min": 2200.0,
+            "max": 6461.328
+        },
+        {
+            "current": 2826.976,
+            "min": 2200.0,
+            "max": 6919.531
+        },
+        {
+            "current": 2867.866,
+            "min": 2200.0,
+            "max": 7228.32
+        },
+        {
+            "current": 2192.954,
+            "min": 2200.0,
+            "max": 5694.335
+        },
+        {
+            "current": 2226.822,
+            "min": 2200.0,
+            "max": 5850.39
+        },
+        {
+            "current": 2671.454,
+            "min": 2200.0,
+            "max": 5236.132
+        },
+        {
+            "current": 2233.101,
+            "min": 2200.0,
+            "max": 6155.859
+        },
+        {
+            "current": 2390.072,
+            "min": 2200.0,
+            "max": 6003.125
+        },
+        {
+            "current": 2762.401,
+            "min": 2200.0,
+            "max": 5083.398
+        },
+        {
+            "current": 2226.5,
+            "min": 2200.0,
+            "max": 5388.867
+        },
+        {
+            "current": 2232.356,
+            "min": 2200.0,
+            "max": 5541.601
+        },
+        {
+            "current": 2990.258,
+            "min": 2200.0,
+            "max": 6614.062
+        },
+        {
+            "current": 2910.962,
+            "min": 2200.0,
+            "max": 7075.585
+        },
+        {
+            "current": 2852.917,
+            "min": 2200.0,
+            "max": 6308.593
+        },
+        {
+            "current": 4051.471,
+            "min": 2200.0,
+            "max": 7228.32
+        },
+        {
+            "current": 3086.892,
+            "min": 2200.0,
+            "max": 6766.796
+        },
+        {
+            "current": 2841.827,
+            "min": 2200.0,
+            "max": 6461.328
+        },
+        {
+            "current": 2920.451,
+            "min": 2200.0,
+            "max": 6919.531
+        },
+        {
+            "current": 3091.455,
+            "min": 2200.0,
+            "max": 7228.32
+        },
+        {
+            "current": 2181.202,
+            "min": 2200.0,
+            "max": 5694.335
+        },
+        {
+            "current": 2348.592,
+            "min": 2200.0,
+            "max": 5850.39
+        },
+        {
+            "current": 2770.082,
+            "min": 2200.0,
+            "max": 5236.132
+        },
+        {
+            "current": 2225.887,
+            "min": 2200.0,
+            "max": 6155.859
+        },
+        {
+            "current": 2222.843,
+            "min": 2200.0,
+            "max": 6003.125
+        },
+        {
+            "current": 2671.625,
+            "min": 2200.0,
+            "max": 5083.398
+        },
+        {
+            "current": 2192.399,
+            "min": 2200.0,
+            "max": 5388.867
+        },
+        {
+            "current": 2134.24,
+            "min": 2200.0,
+            "max": 5541.601
+        }
+    ],
+    "disk": {
+        "total": 455.42271423339844,
+        "used": 363.8481788635254
+    },
+    "gpu": "NVIDIA GeForce GTX 1060 6GB",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1060 6GB",
+            "memory_total": 6370426880
+        }
+    ],
+    "memory": {
+        "total": 31.318622589111328
+    }
+}

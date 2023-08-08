@@ -1,0 +1,26 @@
+Resolving data files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3371/3371 [00:00<00:00, 195050.27it/s]
+Found cached dataset imagefolder (/home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f)
+Loading cached split indices for dataset at /home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f/cache-0b4a8a602117c2d7.arrow and /home/simtoon/.cache/huggingface/datasets/imagefolder/smtn_girls_likeOrNot-8f15de4de8339189/0.0.0/37fbb85cc714a338bea574ac6c7d0b5be5aff46c1862c1989b20e0771199e93f/cache-89c7b4019dbe549b.arrow
+Traceback (most recent call last):
+  File "/home/simtoon/git/attraction_classifier/train.py", line 38, in <module>
+    ds["train"] = ds["train"].map(toPNG, remove_columns=["image"])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/datasets/arrow_dataset.py", line 578, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/datasets/arrow_dataset.py", line 543, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/datasets/arrow_dataset.py", line 3073, in map
+    for rank, done, content in Dataset._map_single(**dataset_kwargs):
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/datasets/arrow_dataset.py", line 3427, in _map_single
+    example = apply_function_on_filtered_inputs(example, i, offset=offset)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/venv/lib/python3.11/site-packages/datasets/arrow_dataset.py", line 3330, in apply_function_on_filtered_inputs
+    processed_inputs = function(*fn_args, *additional_args, **fn_kwargs)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/simtoon/git/attraction_classifier/train.py", line 34, in toPNG
+    image.save(f, "PNG")
+    ^^^^^^^^^^
+AttributeError: 'LazyRow' object has no attribute 'save'
+Train: 2696 | Test: 675
