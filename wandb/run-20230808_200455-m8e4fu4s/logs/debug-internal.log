@@ -542,3 +542,417 @@
 2023-08-08 20:14:27,034 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
 2023-08-08 20:14:27,375 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
 2023-08-08 20:14:32,376 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:14:37,376 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:14:41,664 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:14:42,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:14:42,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:14:42,034 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:14:42,433 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:14:43,664 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:14:47,433 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:14:52,434 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:14:56,992 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:14:57,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:14:57,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:14:57,034 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:14:57,628 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:01,669 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:15:03,102 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:08,103 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:12,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:15:12,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:15:12,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:15:13,127 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:18,128 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:23,128 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:26,992 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:15:27,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:15:27,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:15:27,034 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:15:28,989 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:31,676 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:15:33,989 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:38,990 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:41,678 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:15:42,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:15:42,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:15:42,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:15:44,884 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:49,885 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:54,885 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:15:56,993 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:15:57,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:15:57,034 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:15:57,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:16:00,444 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:03,683 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:16:06,441 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:11,442 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:12,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:16:12,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:16:12,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:16:17,342 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:21,688 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:16:22,443 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:26,993 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:16:27,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:16:27,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:16:27,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:16:28,437 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:31,690 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:16:34,104 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:37,692 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:16:39,454 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:42,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:16:42,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:16:42,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:16:45,413 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:51,104 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:51,695 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:16:53,696 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:16:56,447 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:16:56,994 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:16:57,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:16:57,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:16:57,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:17:01,526 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:06,526 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:11,700 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:17:12,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:17:12,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:17:12,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:17:12,489 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:13,701 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:17:17,489 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:22,490 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:26,995 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:17:27,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:17:27,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:17:27,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:17:28,134 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:31,705 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:17:34,106 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:39,106 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:42,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:17:42,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:17:42,035 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:17:44,986 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:49,709 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:17:50,453 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:55,454 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:17:56,995 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:17:57,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:17:57,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:17:57,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:18:01,106 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:01,712 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:18:06,107 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:11,107 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:12,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:18:12,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:18:12,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:18:16,301 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:21,457 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:21,716 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:18:26,457 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:26,996 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:18:27,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:18:27,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:18:27,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:18:31,458 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:31,719 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:18:33,719 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:18:36,458 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:39,721 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:18:41,459 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:42,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:18:42,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:18:42,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:18:46,468 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:51,724 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:18:52,108 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:18:56,996 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:18:57,035 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:18:57,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:18:57,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:18:57,510 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:02,510 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:07,511 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:11,728 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:19:12,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:19:12,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:19:12,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:19:12,959 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:17,960 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:21,731 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:19:23,108 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:26,997 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:19:27,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:19:27,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:19:27,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:19:28,426 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:33,426 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:38,427 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:42,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:19:42,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:19:42,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:19:43,586 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:47,737 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:19:49,466 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:54,467 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:19:56,997 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:19:57,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:19:57,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:19:57,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:20:00,109 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:01,740 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:20:05,110 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:10,110 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:12,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:20:12,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:20:12,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:20:15,747 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:21,470 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:21,744 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:20:26,470 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:26,998 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:20:27,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:20:27,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:20:27,036 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:20:31,585 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:36,585 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:41,748 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:20:42,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:20:42,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:20:42,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:20:43,144 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:48,144 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:53,145 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:20:56,999 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:20:57,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:20:57,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:20:57,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:20:58,765 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:03,753 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:21:04,474 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:09,475 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:12,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:21:12,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:21:12,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:21:14,579 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:19,579 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:21,757 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:21:25,111 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:26,999 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:21:27,036 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:21:27,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:21:27,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:21:30,431 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:35,432 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:40,433 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:41,762 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:21:42,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:21:42,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:21:42,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:21:46,430 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:51,431 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:56,431 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:21:57,000 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:21:57,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:21:57,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:21:57,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:22:01,766 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:22:02,112 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:07,112 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:12,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:22:12,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:22:12,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:22:12,474 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:17,482 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:17,770 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:22:22,482 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:27,000 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:22:27,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:22:27,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:22:27,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:22:28,477 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:31,773 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:22:34,113 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:39,113 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:42,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:22:42,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:22:42,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:22:45,047 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:49,777 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:22:50,485 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:55,486 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:22:57,005 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:22:57,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:22:57,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:22:57,038 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:23:01,113 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:01,780 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:23:06,114 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:11,114 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:12,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:23:12,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:23:12,038 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:23:16,488 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:17,783 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:23:21,489 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:26,489 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:27,002 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:23:27,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:23:27,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:23:27,037 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:23:31,786 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:23:32,114 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:37,115 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:42,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:23:42,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:23:42,038 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:23:42,589 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:47,589 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:49,790 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:23:53,492 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:55,792 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:23:57,002 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:23:57,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: keepalive
+2023-08-08 20:23:57,037 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-08 20:23:57,038 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: stop_status
+2023-08-08 20:23:58,493 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:23:59,793 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:24:03,794 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:24:04,083 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:24:06,378 DEBUG   SenderThread:3333628 [sender.py:send():379] send: exit
+2023-08-08 20:24:06,378 INFO    SenderThread:3333628 [sender.py:send_exit():584] handling exit code: 0
+2023-08-08 20:24:06,378 INFO    SenderThread:3333628 [sender.py:send_exit():586] handling runtime: 1149
+2023-08-08 20:24:06,378 INFO    SenderThread:3333628 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-08 20:24:06,379 INFO    SenderThread:3333628 [sender.py:send_exit():592] send defer
+2023-08-08 20:24:06,379 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,379 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 0
+2023-08-08 20:24:06,379 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,379 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 0
+2023-08-08 20:24:06,379 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 1
+2023-08-08 20:24:06,379 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,379 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 1
+2023-08-08 20:24:06,379 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,379 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 1
+2023-08-08 20:24:06,379 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 2
+2023-08-08 20:24:06,380 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,380 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 2
+2023-08-08 20:24:06,380 INFO    HandlerThread:3333628 [system_monitor.py:finish():190] Stopping system monitor
+2023-08-08 20:24:06,380 DEBUG   SystemMonitor:3333628 [system_monitor.py:_start():166] Finished system metrics aggregation loop
+2023-08-08 20:24:06,380 DEBUG   SystemMonitor:3333628 [system_monitor.py:_start():170] Publishing last batch of metrics
+2023-08-08 20:24:06,381 INFO    HandlerThread:3333628 [interfaces.py:finish():202] Joined cpu monitor
+2023-08-08 20:24:06,381 INFO    HandlerThread:3333628 [interfaces.py:finish():202] Joined disk monitor
+2023-08-08 20:24:06,435 INFO    HandlerThread:3333628 [interfaces.py:finish():202] Joined gpu monitor
+2023-08-08 20:24:06,435 INFO    HandlerThread:3333628 [interfaces.py:finish():202] Joined memory monitor
+2023-08-08 20:24:06,436 INFO    HandlerThread:3333628 [interfaces.py:finish():202] Joined network monitor
+2023-08-08 20:24:06,436 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,436 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 2
+2023-08-08 20:24:06,436 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 3
+2023-08-08 20:24:06,436 DEBUG   SenderThread:3333628 [sender.py:send():379] send: stats
+2023-08-08 20:24:06,436 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,437 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 3
+2023-08-08 20:24:06,437 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,437 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 3
+2023-08-08 20:24:06,437 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 4
+2023-08-08 20:24:06,437 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,437 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 4
+2023-08-08 20:24:06,437 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,437 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 4
+2023-08-08 20:24:06,437 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 5
+2023-08-08 20:24:06,437 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,437 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 5
+2023-08-08 20:24:06,437 DEBUG   SenderThread:3333628 [sender.py:send():379] send: summary
+2023-08-08 20:24:06,438 INFO    SenderThread:3333628 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-08 20:24:06,438 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,438 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 5
+2023-08-08 20:24:06,438 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 6
+2023-08-08 20:24:06,438 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,438 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 6
+2023-08-08 20:24:06,438 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,438 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 6
+2023-08-08 20:24:06,438 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 7
+2023-08-08 20:24:06,438 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: status_report
+2023-08-08 20:24:06,438 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:06,438 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 7
+2023-08-08 20:24:06,439 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:06,439 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 7
+2023-08-08 20:24:06,794 INFO    Thread-12 :3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/wandb-summary.json
+2023-08-08 20:24:07,378 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-08 20:24:09,069 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 8
+2023-08-08 20:24:09,069 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: poll_exit
+2023-08-08 20:24:09,070 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:09,070 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 8
+2023-08-08 20:24:09,070 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:09,070 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 8
+2023-08-08 20:24:09,070 INFO    SenderThread:3333628 [job_builder.py:build():281] Attempting to build job artifact
+2023-08-08 20:24:09,071 INFO    SenderThread:3333628 [job_builder.py:_get_source_type():411] no source found
+2023-08-08 20:24:09,071 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 9
+2023-08-08 20:24:09,071 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:09,071 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 9
+2023-08-08 20:24:09,071 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:09,071 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 9
+2023-08-08 20:24:09,071 INFO    SenderThread:3333628 [dir_watcher.py:finish():358] shutting down directory watcher
+2023-08-08 20:24:09,795 INFO    SenderThread:3333628 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:24:09,796 INFO    SenderThread:3333628 [dir_watcher.py:finish():388] scan: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files
+2023-08-08 20:24:09,796 INFO    SenderThread:3333628 [dir_watcher.py:finish():402] scan save: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/config.yaml config.yaml
+2023-08-08 20:24:09,796 INFO    SenderThread:3333628 [dir_watcher.py:finish():402] scan save: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/wandb-metadata.json wandb-metadata.json
+2023-08-08 20:24:09,798 INFO    SenderThread:3333628 [dir_watcher.py:finish():402] scan save: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log output.log
+2023-08-08 20:24:09,798 INFO    SenderThread:3333628 [dir_watcher.py:finish():402] scan save: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/wandb-summary.json wandb-summary.json
+2023-08-08 20:24:09,799 INFO    SenderThread:3333628 [dir_watcher.py:finish():402] scan save: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/requirements.txt requirements.txt
+2023-08-08 20:24:09,804 INFO    SenderThread:3333628 [dir_watcher.py:finish():402] scan save: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/code/train.py code/train.py
+2023-08-08 20:24:09,804 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 10
+2023-08-08 20:24:09,804 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:09,804 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 10
+2023-08-08 20:24:09,805 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:09,805 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 10
+2023-08-08 20:24:09,805 INFO    SenderThread:3333628 [file_pusher.py:finish():159] shutting down file pusher
+2023-08-08 20:24:10,576 INFO    wandb-upload_0:3333628 [upload_job.py:push():131] Uploaded file /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/config.yaml
+2023-08-08 20:24:10,966 INFO    wandb-upload_1:3333628 [upload_job.py:push():131] Uploaded file /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/output.log
+2023-08-08 20:24:11,089 INFO    wandb-upload_2:3333628 [upload_job.py:push():131] Uploaded file /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/wandb-summary.json
+2023-08-08 20:24:11,114 INFO    wandb-upload_3:3333628 [upload_job.py:push():131] Uploaded file /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/files/requirements.txt
+2023-08-08 20:24:11,314 INFO    Thread-11 (_thread_body):3333628 [sender.py:transition_state():612] send defer: 11
+2023-08-08 20:24:11,314 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:11,314 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 11
+2023-08-08 20:24:11,315 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:11,315 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 11
+2023-08-08 20:24:11,315 INFO    SenderThread:3333628 [file_pusher.py:join():164] waiting for file pusher
+2023-08-08 20:24:11,315 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 12
+2023-08-08 20:24:11,315 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:11,315 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 12
+2023-08-08 20:24:11,315 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:11,315 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 12
+2023-08-08 20:24:11,315 INFO    SenderThread:3333628 [file_stream.py:finish():593] file stream finish called
+2023-08-08 20:24:12,152 INFO    SenderThread:3333628 [file_stream.py:finish():597] file stream finish is done
+2023-08-08 20:24:12,152 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 13
+2023-08-08 20:24:12,152 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:12,152 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 13
+2023-08-08 20:24:12,152 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:12,152 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 13
+2023-08-08 20:24:12,152 INFO    SenderThread:3333628 [sender.py:transition_state():612] send defer: 14
+2023-08-08 20:24:12,153 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: defer
+2023-08-08 20:24:12,153 INFO    HandlerThread:3333628 [handler.py:handle_request_defer():170] handle defer: 14
+2023-08-08 20:24:12,153 DEBUG   SenderThread:3333628 [sender.py:send():379] send: final
+2023-08-08 20:24:12,153 DEBUG   SenderThread:3333628 [sender.py:send():379] send: footer
+2023-08-08 20:24:12,153 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: defer
+2023-08-08 20:24:12,153 INFO    SenderThread:3333628 [sender.py:send_request_defer():608] handle sender defer: 14
+2023-08-08 20:24:12,153 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-08 20:24:12,154 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: poll_exit
+2023-08-08 20:24:12,154 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: server_info
+2023-08-08 20:24:12,154 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: server_info
+2023-08-08 20:24:12,155 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: get_summary
+2023-08-08 20:24:12,156 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: sampled_history
+2023-08-08 20:24:12,156 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: job_info
+2023-08-08 20:24:12,387 DEBUG   SenderThread:3333628 [sender.py:send_request():406] send_request: job_info
+2023-08-08 20:24:12,388 INFO    MainThread:3333628 [wandb_run.py:_footer_history_summary_info():3481] rendering history
+2023-08-08 20:24:12,388 INFO    MainThread:3333628 [wandb_run.py:_footer_history_summary_info():3513] rendering summary
+2023-08-08 20:24:12,388 INFO    MainThread:3333628 [wandb_run.py:_footer_sync_info():3440] logging synced files
+2023-08-08 20:24:12,389 DEBUG   HandlerThread:3333628 [handler.py:handle_request():144] handle_request: shutdown
+2023-08-08 20:24:12,389 INFO    HandlerThread:3333628 [handler.py:finish():857] shutting down handler
+2023-08-08 20:24:13,157 INFO    WriterThread:3333628 [datastore.py:close():294] close: /home/simtoon/git/attraction_classifier/wandb/run-20230808_200455-m8e4fu4s/run-m8e4fu4s.wandb
+2023-08-08 20:24:13,388 INFO    SenderThread:3333628 [sender.py:finish():1552] shutting down sender
+2023-08-08 20:24:13,388 INFO    SenderThread:3333628 [file_pusher.py:finish():159] shutting down file pusher
+2023-08-08 20:24:13,388 INFO    SenderThread:3333628 [file_pusher.py:join():164] waiting for file pusher

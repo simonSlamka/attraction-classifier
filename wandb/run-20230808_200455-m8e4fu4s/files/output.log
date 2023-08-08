@@ -182,3 +182,47 @@ The progress bars may be unreliable.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Upload file pytorch_model.bin: 336MB [10:00, 660kB/s]                                                                                                                                                                                To https://huggingface.co/ongkn/out
+   f4f9b93..0729ee1  main -> main
+Upload file pytorch_model.bin: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 327M/327M [10:03<00:00, 569kB/s]
+To https://huggingface.co/ongkn/out
+   0729ee1..f23b221  main -> main
