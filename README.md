@@ -1,5 +1,8 @@
 # Attraction classifier
 
+> [!CAUTION]
+> This repo contains inherent bias! Please keep in mind that its contents align with me, but will most likely not with anyone else.
+
 Facial landmark detection model ref:
 ```
 C. Sagonas, E. Antonakos, G, Tzimiropoulos, S. Zafeiriou, M. Pantic. 
