@@ -59,7 +59,7 @@ def grab_faces(inImg, outImg) -> bool:
 	if detected is None:
 		faces = detector(gray) # detect faces
 		if len(faces) > 0:
-			detected = faces[0].rect
+			detected = faces[0]
 			detected = (detected.left(), detected.top(), detected.width(), detected.height())
 
 	if "pos" in inImg and detected is not None: # if positive class and face detected
@@ -127,7 +127,7 @@ def resize_faces(inFace, outFace):
 	else:
 		os.remove(inFace)
 		if (cv2.imwrite(os.path.join(outFace), img)): # save face
-			logging.info(f"Face saved to positive class img: {inFace}!!")
+			logging.info(f"Face saved from img: {inFace}!!")
 
 def central_crop(inImg, outImg):
 	"""
@@ -186,26 +186,26 @@ negFiles = [f for f in totalFiles if "neg" in f] # grab negative class imgs
 
 print(f"Positive faces: {len(posFiles)} | Negative imgs: {len(negFiles)}") # sanity check
 
-for file in posFiles:
-	faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
-	if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
-		os.makedirs(faceDir) # if not, create it
-	grab_faces(file, faceDir) # grab faces
+# for file in posFiles:
+# 	faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
+# 	if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
+# 		os.makedirs(faceDir) # if not, create it
+# 	grab_faces(file, faceDir) # grab faces
 
-for file in negFiles:
-	faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
-	destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
-	if not os.path.exists(faceDir):
-		os.makedirs(faceDir)
-	didWeGrab = grab_faces(file, faceDir) # grab faces
-	if not didWeGrab:
-		central_crop(file, faceDir) # central crop
+# for file in negFiles:
+# 	faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
+# 	destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
+# 	if not os.path.exists(faceDir):
+# 		os.makedirs(faceDir)
+# 	didWeGrab = grab_faces(file, faceDir) # grab faces
+# 	if not didWeGrab:
+# 		central_crop(file, faceDir) # central crop
 
 totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".png"))] # grab all faces for sanity checking
 print(f"Total faces: {len(totalFaces)}")
 
-for face in totalFaces:
-	resize_faces(face, face) # resize faces to 224x224
+# for face in totalFaces:
+# 	resize_faces(face, face) # resize faces to 224x224
 
 if len(totalFaces) < len(totalFiles): # sanity check
 	print("Not all faces were grabbed")
@@ -314,8 +314,8 @@ trainingArgs = TrainingArguments(
 	evaluation_strategy="epoch",
 	save_strategy="epoch",
 	learning_rate=5e-5,
-	per_device_train_batch_size=24,
-	per_device_eval_batch_size=24,
+	per_device_train_batch_size=16,
+	per_device_eval_batch_size=16,
 	gradient_accumulation_steps=4,
 	weight_decay=0.01,
 	num_train_epochs=10,
