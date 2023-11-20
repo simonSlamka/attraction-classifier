@@ -10,6 +10,7 @@ from torchvision.transforms import Normalize, ToTensor, Compose, RandomResizedCr
 import io
 import cv2
 import logging
+import dlib
 
 logging.basicConfig(level=logging.INFO)
 
@@ -30,12 +31,17 @@ for i, label in enumerate(labels):
 	label2id[label] = str(i)
 	id2label[str(i)] = label
 
-faceCascades = [
+cascades = [
     "haarcascade_frontalface_default.xml",
     "haarcascade_frontalface_alt.xml",
-    "haarcascade_frontalface_alt2.xml"
+    "haarcascade_frontalface_alt2.xml",
+    "haarcascade_frontalface_alt_tree.xml"
 ]
-paddingBy = 0.15
+
+detector = dlib.get_frontal_face_detector() # load face detector
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
+
+paddingBy = 0.05
 
 def grab_faces(inImg, outImg) -> bool:
 	img = cv2.imread(inImg) # read image
@@ -43,12 +49,18 @@ def grab_faces(inImg, outImg) -> bool:
 
 	detected = None
 
-	for cascade in faceCascades:
-		faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
-		faces = faceCascade.detectMultiScale(gray, scaleFactor=1.4, minNeighbors=4) # detect faces
+	for cascade in cascades:
+		cascadeClassifier = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
+		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=4) # detect faces
 		if len(faces) > 0:
 			detected = faces[0]
 			break
+
+	if detected is None:
+		faces = detector(gray) # detect faces
+		if len(faces) > 0:
+			detected = faces[0].rect
+			detected = (detected.left(), detected.top(), detected.width(), detected.height())
 
 	if "pos" in inImg and detected is not None: # if positive class and face detected
 		x, y, w, h = detected # grab first face
@@ -68,7 +80,27 @@ def grab_faces(inImg, outImg) -> bool:
 			return False
 		else:
 			cv2.imwrite(os.path.join(outImg, path), face) # save face
+			return True
+	elif "neg" in inImg and detected is not None:
+		# detect faces
+		x, y, w, h = detected # grab first face
+		padW = int(paddingBy * w) # get padding width
+		padH = int(paddingBy * h) # get padding height
+		x = max(0, x - padW)
+		y = max(0, y - padH)
+		imgH, imgW, _ = img.shape # get image dims
+		w += min(imgW - x, w + 2 * padW)
+		h += min(imgH - y, h + 2 * padH)
+		face = img[y:y+h, x:x+w] # crop face
+		path = os.path.basename(inImg) # get filename
+		if not os.path.exists(outImg): # sanity check if path itself exists before saving img
+			os.makedirs(outImg) # if not, create it
+		if os.path.exists(os.path.join(outImg, path)): # sanity check if face already exists
+			logging.warning(f"Face already exists in negative class img: {inImg}!!")
 			return False
+		else:
+			cv2.imwrite(os.path.join(outImg, path), face) # save face
+			return True
 	else:
 		if "pos" in inImg:
 			logging.error(f"No face detected in positive class img: {inImg}!!")
@@ -76,7 +108,7 @@ def grab_faces(inImg, outImg) -> bool:
 		elif "neg" in inImg:
 			return False
 
-	# TODO: add negative class face detection
+	return False
 
 def resize_faces(inFace, outFace):
 	"""
@@ -184,6 +216,8 @@ if len(mismatched) > 0:
 	print(mismatched)
 	raise ValueError("Non-224x224 images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
+breakpoint()
+
 imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k") # load img processor
 collator = DefaultDataCollator() # load collator
 
@@ -280,13 +314,14 @@ trainingArgs = TrainingArguments(
 	evaluation_strategy="epoch",
 	save_strategy="epoch",
 	learning_rate=5e-5,
-	per_device_train_batch_size=16,
-	per_device_eval_batch_size=16,
+	per_device_train_batch_size=24,
+	per_device_eval_batch_size=24,
 	gradient_accumulation_steps=4,
 	weight_decay=0.01,
 	num_train_epochs=10,
 	warmup_ratio=0.1,
-	logging_steps=10,
+	seed=69,
+	logging_steps=25,
 	load_best_model_at_end=True,
 	metric_for_best_model="accuracy",
 	push_to_hub=True,
