@@ -40,6 +40,7 @@ cascades = [
 
 detector = dlib.get_frontal_face_detector() # load face detector
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
+mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load face detector
 
 paddingBy = 0.05
 
@@ -61,6 +62,12 @@ def grab_faces(inImg, outImg) -> bool:
 		if len(faces) > 0:
 			detected = faces[0]
 			detected = (detected.left(), detected.top(), detected.width(), detected.height())
+
+	if detected is None:
+		faces = mmod(img)
+		if len(faces) > 0:
+			detected = faces[0]
+			detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
 
 	if "pos" in inImg and detected is not None: # if positive class and face detected
 		x, y, w, h = detected # grab first face
