@@ -42,7 +42,7 @@ detector = dlib.get_frontal_face_detector() # load face detector
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
 mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load face detector
 
-paddingBy = 0.05
+paddingBy = 0.01
 
 def grab_faces(inImg, outImg) -> bool:
 	img = cv2.imread(inImg) # read image
