@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 wandb.init(project="girl-classifier", entity="simtoonia")
 
-dsDir = "/home/simtoon/smtn_girls_likeOrNot" # dataset dir
+dsDir = "/home/simtoon/smtn_girls_likeOrNot/.faces" # dataset dir
 
 ds = load_dataset(dsDir, split="train") # load girls
 ds = ds.train_test_split(test_size=0.2, seed=69) # split 'em
