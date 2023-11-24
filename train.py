@@ -223,8 +223,6 @@ if len(mismatched) > 0:
 	print(mismatched)
 	raise ValueError("Non-224x224 images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
-breakpoint()
-
 imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k") # load img processor
 collator = DefaultDataCollator() # load collator
 
