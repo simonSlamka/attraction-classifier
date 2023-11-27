@@ -1,5 +1,5 @@
-from datasets import load_dataset
-from PIL import Image
+from datasets import load_dataset, ClassLabel, Image
+from PIL import Image as PILImage
 from random import randrange
 from transformers import AutoImageProcessor, DefaultDataCollator, AutoModelForImageClassification, TrainingArguments, Trainer
 import evaluate
@@ -11,22 +11,44 @@ import io
 import cv2
 import logging
 import dlib
+import gc
 
 logging.basicConfig(level=logging.INFO)
 
 wandb.init(project="girl-classifier", entity="simtoonia")
 
-dsDir = "/home/simtoon/smtn_girls_likeOrNot/.faces" # dataset dir
+dsDir = "/home/simtoon/smtn_girls_likeOrNot" # dataset dir
 
-ds = load_dataset(dsDir, split="train") # load girls
-ds = ds.train_test_split(test_size=0.2, seed=69) # split 'em
+for subdir in ["pos", "neg"]:
+	subdirPath = os.path.join(dsDir, subdir)
+	for root, dirs, files in os.walk(subdirPath):
+		for file in files:
+			if file.startswith(("train", "test", "val")):
+				raise ValueError(f"File {file} starts with a keyword that could confuse split detection")
+			if file.startswith("."):
+				continue
+			if file.endswith((".jpg", ".png", ".jpeg")):
+				filePath = os.path.join(root, file)
+				try:
+					img = PILImage.open(filePath)
+					img.verify()
+				except (IOError, SyntaxError) as e:
+					print(f"{e}: {filePath}")
+			else:
+				raise ValueError(f"File {file} is not an image")
 
-print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # sanity check
+ds = load_dataset("imagefolder", data_dir=dsDir, split="train") #.cast_column("image", Image(decode=False))
+ds = ds.train_test_split(test_size=0.15, seed=69) # split 'em
+# ds.push_to_hub("ongkn/women", private=True)
+
+print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
 
 # TODO: dedupe images through cosim
 
-# ds["train"][randrange(0, 2001)]["image"].show() # display a specimen
+# ! after successful face detection and cropping across the board, create a dataset exclusively for faces
 
+# ds["train"][randrange(0, 2001)]["image"].show() # display a specimen
+print(f"{ds['train'].features}")
 labels = ds["train"].features["label"].names # get labels
 label2id, id2label = dict(), dict() # create lookup dicts
 for i, label in enumerate(labels):
@@ -34,10 +56,10 @@ for i, label in enumerate(labels):
 	id2label[str(i)] = label
 
 cascades = [
-    "haarcascade_frontalface_default.xml",
-    "haarcascade_frontalface_alt.xml",
-    "haarcascade_frontalface_alt2.xml",
-    "haarcascade_frontalface_alt_tree.xml"
+	"haarcascade_frontalface_default.xml",
+	"haarcascade_frontalface_alt.xml",
+	"haarcascade_frontalface_alt2.xml",
+	"haarcascade_frontalface_alt_tree.xml"
 ]
 
 detector = dlib.get_frontal_face_detector() # load face detector
@@ -129,9 +151,9 @@ def resize_faces(inFace, outFace):
 	be saved
 	"""
 	img = cv2.imread(inFace) # read image
-	img = cv2.resize(img, (224, 224)) # resize image
+	img = cv2.resize(img, (400, 400)) # resize image
 	path = os.path.basename(inFace) # get filename
-	if os.path.exists(os.path.join(outFace, path)) and cv2.imread(os.path.join(outFace, path)).shape == (224, 224, 3):
+	if os.path.exists(os.path.join(outFace, path)) and cv2.imread(os.path.join(outFace, path)).shape == (400, 400, 3):
 		logging.warning(f"Face of correct dims already exists in positive class img: {inFace}!!")
 	else:
 		os.remove(inFace)
@@ -141,7 +163,7 @@ def resize_faces(inFace, outFace):
 def central_crop(inImg, outImg):
 	"""
 	The function `central_crop` takes an input image, crops it to a central square region of size
-	224x224 pixels, and saves the cropped image to an output directory.
+	400x400 pixels, and saves the cropped image to an output directory.
 
 	:param inImg: The input image file path. This is the image that you want to crop
 	:param outImg: The parameter "outImg" is the output directory where the cropped image will be saved
@@ -150,10 +172,10 @@ def central_crop(inImg, outImg):
 	h, w, _ = img.shape # get image dims
 	centerY, centerX = h // 2, w // 2 # get center
 
-	startX = centerX - 112 # get start x (224 / 2)
-	startY = centerY - 112 # get start y (224 / 2)
-	endX = centerX + 112 # get end x (224 / 2)
-	endY = centerY + 112 # get end y (224 / 2)
+	startX = centerX - 200 # get start x (400 / 2)
+	startY = centerY - 200 # get start y (400 / 2)
+	endX = centerX + 200 # get end x (400 / 2)
+	endY = centerY + 200 # get end y (400 / 2)
 
 	cropped = img[startY:endY, startX:endX] # crop image
 
@@ -166,49 +188,46 @@ def central_crop(inImg, outImg):
 	else:
 		cv2.imwrite(os.path.join(outImg, path), cropped)
 
-def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (224, 224)
+def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (400, 400)
 	"""
 	The function `check_img_dims` checks if all the images in a given directory have dimensions of
-	224x224 pixels and returns a list of paths to images that do not meet this criteria.
+	400x400 pixels and returns a list of paths to images that do not meet this criteria.
 
 	:param dir: The `dir` parameter is the directory path where the images are located
-	:return: a list of file paths for images that have dimensions other than (224, 224).
+	:return: a list of file paths for images that have dimensions other than (400, 400).
 	"""
 	mismatched = []
 
 	for root, _, files in os.walk(dir):
 		for file in files:
-			if file.endswith((".jpg", ".png")):
+			if file.endswith((".jpg", ".jpeg", ".png")):
 				path = os.path.join(root, file)
 				img = cv2.imread(path)
 				h, w, _ = img.shape
-				if h != 224 or w != 224:
+				if h != 400 or w != 400:
 					mismatched.append(os.path.join(path))
 
 	return mismatched
 
-totalFiles = [os.path.join(dp, f) for dp, dn, filenames in os.walk(dsDir) for f in filenames if f.endswith((".jpg", ".png"))] # grab all files for sanity checking
+totalFiles = [os.path.join(dp, f) for dp, dn, filenames in os.walk(dsDir) for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all files for sanity checking
 print(f"Total imgs: {len(totalFiles)}")
 
 posFiles = [f for f in totalFiles if "pos" in f] # grab positive class girls
 negFiles = [f for f in totalFiles if "neg" in f] # grab negative class imgs
 
-posFaces = [f for f in posFiles if os.path.exists(os.path.join(dsDir, ".faces", "pos", os.path.basename(f)))]
-negFaces = [f for f in negFiles if os.path.exists(os.path.join(dsDir, ".faces", "neg", os.path.basename(f)))]
-
 print(f"Positive faces: {len(posFiles)} | Negative imgs: {len(negFiles)}") # sanity check
 
 for file in posFiles:
-	if file not in posFaces:
-		faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
+	faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
+	if file not in faceDir:
 		if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
 			os.makedirs(faceDir) # if not, create it
 		grab_faces(file, faceDir) # grab faces
 
 for file in negFiles:
-	if file not in negFaces:
-		faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
-		destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
+	faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
+	destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
+	if file not in faceDir:
 		if not os.path.exists(faceDir):
 			os.makedirs(faceDir)
 		didWeGrab = grab_faces(file, faceDir) # grab faces
@@ -219,7 +238,7 @@ totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.fa
 print(f"Total faces: {len(totalFaces)}")
 
 for face in totalFaces:
-	resize_faces(face, face) # resize faces to 224x224
+	resize_faces(face, face) # resize faces to 400x400
 
 if len(totalFaces) < len(totalFiles): # sanity check
 	print("Not all faces were grabbed")
@@ -228,9 +247,15 @@ mismatched = check_img_dims(f"{dsDir}/.faces") # sanity check
 if len(mismatched) > 0:
 	print(f"Found {len(mismatched)} mismatched images")
 	print(mismatched)
-	raise ValueError("Non-224x224 images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
+	raise ValueError("Non-(400, 400) images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
-imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k") # load img processor
+faceDs = load_dataset("imagefolder", data_dir=f"{dsDir}/.faces", split="train")
+faceDs = faceDs.train_test_split(test_size=0.15, seed=69)
+ds = faceDs
+del faceDs
+gc.collect()
+
+imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k", size=400) # load img processor
 collator = DefaultDataCollator() # load collator
 
 def toPNG(image): # convert all jpgs to pngs
@@ -246,7 +271,7 @@ def toPNG(image): # convert all jpgs to pngs
 	if image.format != "PNG" and image.format != "png":
 		with io.BytesIO() as f:
 			image.save(f, "PNG")
-			return Image.open(f)
+			return PILImage.open(f)
 	return image
 
 def transformToPNG(example):
@@ -288,7 +313,7 @@ def transform(example):
 	:param example: A dictionary containing the following keys:
 	:return: the modified "example" dictionary.
 	"""
-	# image = Image.open(example["image"])
+	# image = PILImage.open(example["image"])
 	# image = image.convert("RGB")
 	# image = imgProcessor(image, return_tensors="pt")
 	# example["pixel_values"] = image.pixel_values[0]
@@ -329,11 +354,11 @@ trainingArgs = TrainingArguments(
 	per_device_train_batch_size=16,
 	per_device_eval_batch_size=16,
 	gradient_accumulation_steps=4,
-	weight_decay=0.01,
+	weight_decay=0.015,
 	num_train_epochs=10,
-	warmup_ratio=0.1,
+	warmup_ratio=0.15,
 	seed=69,
-	logging_steps=25,
+	logging_steps=15,
 	load_best_model_at_end=True,
 	metric_for_best_model="accuracy",
 	push_to_hub=True,

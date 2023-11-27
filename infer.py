@@ -1,6 +1,9 @@
-from transformers import pipeline
+from transformers import pipeline, ViTForImageClassification, ViTFeatureExtractor
 
-pipe = pipeline("image-classification", model="ongkn/attraction-classifier")
+model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
+featExtractor = ViTFeatureExtractor.from_pretrained("ongkn/attraction-classifier")
 
-result = pipe("tf.jpeg")
+pipe = pipeline("image-classification", model=model, feature_extractor=featExtractor)
+
+result = pipe("emi.jpg")
 print(result)
