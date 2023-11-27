@@ -1,6 +1,5 @@
 from transformers import ViTFeatureExtractor, ViTForImageClassification
 import warnings
-warnings.filterwarnings('ignore')
 from torchvision import transforms
 from datasets import load_dataset
 from pytorch_grad_cam import run_dff_on_image, GradCAM
@@ -12,12 +11,15 @@ import cv2 as cv
 import torch
 from typing import List, Callable, Optional
 
-image = Image.open("tf.jpeg").convert("RGB")
-# jpeg it
-# image = image.convert("RGB")
+# original borrowed from https://github.com/jacobgil/pytorch-grad-cam/blob/master/tutorials/HuggingFace.ipynb
+# thanks @jacobgil
+# further mods beyond this commit by @simonSlamka
+
+warnings.filterwarnings("ignore")
+
+image = Image.open("emi2.png").convert("RGB")
 img_tensor = transforms.ToTensor()(image)
 
-""" Model wrapper to return a tensor"""
 class HuggingfaceToTensorModelWrapper(torch.nn.Module):
     def __init__(self, model):
         super(HuggingfaceToTensorModelWrapper, self).__init__()
@@ -26,22 +28,10 @@ class HuggingfaceToTensorModelWrapper(torch.nn.Module):
     def forward(self, x):
         return self.model(x).logits
 
-""" Translate the category name to the category index.
-    Some models aren't trained on Imagenet but on even larger datasets,
-    so we can't just assume that 761 will always be remote-control.
-
-"""
 def category_name_to_index(model, category_name):
     name_to_index = dict((v, k) for k, v in model.config.id2label.items())
     return name_to_index[category_name]
     
-""" Helper function to run GradCAM on an image and create a visualization.
-    (note to myself: this is probably useful enough to move into the package)
-    If several targets are passed in targets_for_gradcam,
-    e.g different categories,
-    a visualization for each of them will be created.
-    
-"""
 def run_grad_cam_on_image(model: torch.nn.Module,
                           target_layer: torch.nn.Module,
                           targets_for_gradcam: List[Callable],
