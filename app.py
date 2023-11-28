@@ -1,10 +1,11 @@
+import gradio as gr
 from transformers import pipeline, ViTForImageClassification, ViTImageProcessor
-import logging
-import cv2 as cv
 import numpy as np
-import dlib
-from typing import Optional
 from PIL import Image
+import cv2 as cv
+import dlib
+import logging
+from typing import Optional
 
 logging.basicConfig(level=logging.INFO)
 
@@ -69,9 +70,19 @@ processor = ViTImageProcessor.from_pretrained("ongkn/attraction-classifier")
 
 pipe = pipeline("image-classification", model=model, feature_extractor=processor)
 
-face = Image.open("emitest.jpeg")
-face = grab_faces(np.array(face))
-face = Image.fromarray(face)
-result = pipe(face)
+def classify_image(input):
+    face = grab_faces(np.array(input))
+    face = Image.fromarray(face)
+    result = pipe(face)
+    return result[0]["label"], result[0]["score"]
 
-print(result)
+iface = gr.Interface(
+    fn=classify_image,
+    inputs="image",
+    outputs=[
+        {"type": "text", "label": "attraction class"},
+        {"type": "number", "label": "score (confidence)"}
+    ],
+    description="Takes in a (224, 224) image and outputs an attraction class: {\"pos\", \"neg\"}"
+)
+iface.launch()
