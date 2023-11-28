@@ -1,7 +1,7 @@
 from datasets import load_dataset, ClassLabel, Image
 from PIL import Image as PILImage
 from random import randrange
-from transformers import AutoImageProcessor, DefaultDataCollator, AutoModelForImageClassification, TrainingArguments, Trainer
+from transformers import AutoImageProcessor, DefaultDataCollator, AutoModelForImageClassification, TrainingArguments, Trainer, default_data_collator
 import evaluate
 import numpy as np
 import wandb
@@ -66,7 +66,7 @@ detector = dlib.get_frontal_face_detector() # load face detector
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
 mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load face detector
 
-paddingBy = 0.01
+paddingBy = 0.1 # padding by 10%
 
 def grab_faces(inImg, outImg) -> bool:
 	img = cv2.imread(inImg) # read image
@@ -76,7 +76,7 @@ def grab_faces(inImg, outImg) -> bool:
 
 	for cascade in cascades:
 		cascadeClassifier = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
-		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=4) # detect faces
+		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5) # detect faces
 		if len(faces) > 0:
 			detected = faces[0]
 			break
@@ -97,11 +97,13 @@ def grab_faces(inImg, outImg) -> bool:
 		x, y, w, h = detected # grab first face
 		padW = int(paddingBy * w) # get padding width
 		padH = int(paddingBy * h) # get padding height
+		imgH, imgW, _ = img.shape # get image dims
 		x = max(0, x - padW)
 		y = max(0, y - padH)
-		imgH, imgW, _ = img.shape # get image dims
-		w += min(imgW - x, w + 2 * padW)
-		h += min(imgH - y, h + 2 * padH)
+		w = min(imgW - x, w + 2 * padW)
+		h = min(imgH - y, h + 2 * padH)
+		x = max(0, x - (w - detected[2]) // 2) # center the face horizontally
+		y = max(0, y - (h - detected[3]) // 2) # center the face vertically
 		face = img[y:y+h, x:x+w] # crop face
 		path = os.path.basename(inImg) # get filename
 		if not os.path.exists(outImg): # sanity check if path itself exists before saving img
@@ -151,14 +153,14 @@ def resize_faces(inFace, outFace):
 	be saved
 	"""
 	img = cv2.imread(inFace) # read image
-	img = cv2.resize(img, (400, 400)) # resize image
+	img = cv2.resize(img, (224, 224)) # resize image
 	path = os.path.basename(inFace) # get filename
-	if os.path.exists(os.path.join(outFace, path)) and cv2.imread(os.path.join(outFace, path)).shape == (400, 400, 3):
+	if os.path.exists(os.path.join(outFace, path)) and cv2.imread(os.path.join(outFace, path)).shape == (224, 224, 3):
 		logging.warning(f"Face of correct dims already exists in positive class img: {inFace}!!")
 	else:
 		os.remove(inFace)
 		if (cv2.imwrite(os.path.join(outFace), img)): # save face
-			logging.info(f"Face saved from img: {inFace}!!")
+			logging.info(f"Face resized from img: {inFace}!!")
 
 def central_crop(inImg, outImg):
 	"""
@@ -172,10 +174,10 @@ def central_crop(inImg, outImg):
 	h, w, _ = img.shape # get image dims
 	centerY, centerX = h // 2, w // 2 # get center
 
-	startX = centerX - 200 # get start x (400 / 2)
-	startY = centerY - 200 # get start y (400 / 2)
-	endX = centerX + 200 # get end x (400 / 2)
-	endY = centerY + 200 # get end y (400 / 2)
+	startX = centerX - 112 # get start x (224 / 2)
+	startY = centerY - 112 # get start y (224 / 2)
+	endX = centerX + 112 # get end x (224 / 2)
+	endY = centerY + 112 # get end y (224 / 2)
 
 	cropped = img[startY:endY, startX:endX] # crop image
 
@@ -188,13 +190,13 @@ def central_crop(inImg, outImg):
 	else:
 		cv2.imwrite(os.path.join(outImg, path), cropped)
 
-def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (400, 400)
+def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (224, 224)
 	"""
 	The function `check_img_dims` checks if all the images in a given directory have dimensions of
 	400x400 pixels and returns a list of paths to images that do not meet this criteria.
 
 	:param dir: The `dir` parameter is the directory path where the images are located
-	:return: a list of file paths for images that have dimensions other than (400, 400).
+	:return: a list of file paths for images that have dimensions other than (224, 224).
 	"""
 	mismatched = []
 
@@ -204,7 +206,7 @@ def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (
 				path = os.path.join(root, file)
 				img = cv2.imread(path)
 				h, w, _ = img.shape
-				if h != 400 or w != 400:
+				if h != 224 or w != 224:
 					mismatched.append(os.path.join(path))
 
 	return mismatched
@@ -234,11 +236,11 @@ for file in negFiles:
 		if not didWeGrab:
 			central_crop(file, faceDir) # central crop
 
-totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".png"))] # grab all faces for sanity checking
+totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all faces for sanity checking
 print(f"Total faces: {len(totalFaces)}")
 
 for face in totalFaces:
-	resize_faces(face, face) # resize faces to 400x400
+	resize_faces(face, face) # resize faces to 224x224
 
 if len(totalFaces) < len(totalFiles): # sanity check
 	print("Not all faces were grabbed")
@@ -247,7 +249,7 @@ mismatched = check_img_dims(f"{dsDir}/.faces") # sanity check
 if len(mismatched) > 0:
 	print(f"Found {len(mismatched)} mismatched images")
 	print(mismatched)
-	raise ValueError("Non-(400, 400) images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
+	raise ValueError("Non-(224, 224) images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
 faceDs = load_dataset("imagefolder", data_dir=f"{dsDir}/.faces", split="train")
 faceDs = faceDs.train_test_split(test_size=0.15, seed=69)
@@ -255,8 +257,7 @@ ds = faceDs
 del faceDs
 gc.collect()
 
-imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k", size=400) # load img processor
-collator = DefaultDataCollator() # load collator
+imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k", size=224) # load img processor
 
 def toPNG(image): # convert all jpgs to pngs
 	"""
@@ -330,6 +331,11 @@ ds = ds.with_transform(transform)
 
 accuracy = evaluate.load("accuracy")
 
+def collator(x):
+	dict = default_data_collator(x)
+	# dict["interpolate_pos_encoding"] = True # TODO: enable when using input dims > (224, 224)
+	return dict
+
 def compute_metrics(evalPred):
 	"""
 	The function `compute_metrics` takes in a tuple `evalPred` containing predicted values and labels,
@@ -357,6 +363,7 @@ trainingArgs = TrainingArguments(
 	weight_decay=0.015,
 	num_train_epochs=10,
 	warmup_ratio=0.15,
+	lr_scheduler_type="cosine",
 	seed=69,
 	logging_steps=15,
 	load_best_model_at_end=True,
