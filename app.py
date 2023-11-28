@@ -72,17 +72,17 @@ pipe = pipeline("image-classification", model=model, feature_extractor=processor
 
 def classify_image(input):
     face = grab_faces(np.array(input))
+    if face is None:
+        return "No face detected", 0, input
     face = Image.fromarray(face)
     result = pipe(face)
-    return result[0]["label"], result[0]["score"]
+    return result[0]["label"], result[0]["score"], face
 
 iface = gr.Interface(
     fn=classify_image,
     inputs="image",
-    outputs=[
-        {"type": "text", "label": "attraction class"},
-        {"type": "number", "label": "score (confidence)"}
-    ],
-    description="Takes in a (224, 224) image and outputs an attraction class: {\"pos\", \"neg\"}"
+    outputs=["text", "number", "image"],
+    title="Attraction Classifier - subjective",
+    description="Takes in a (224, 224) image and outputs an attraction class: {\"pos\", \"neg\"}. Face detection, cropping, and resizing is done internally."
 )
 iface.launch()
