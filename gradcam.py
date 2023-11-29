@@ -8,10 +8,10 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 from PIL import Image
 import numpy as np
 import cv2 as cv
-import dlib
 import torch
 from typing import List, Callable, Optional
 import logging
+from face_grab import FaceGrabber
 
 # original borrowed from https://github.com/jacobgil/pytorch-grad-cam/blob/master/tutorials/HuggingFace.ipynb
 # thanks @jacobgil
@@ -77,64 +77,10 @@ def reshape_transform_vit_huggingface(x):
     activations = activations.transpose(2, 3).transpose(1, 2)
     return activations
 
-def grab_faces(img: np.ndarray) -> Optional[np.ndarray]:
-    cascades = [
-        "haarcascade_frontalface_default.xml",
-        "haarcascade_frontalface_alt.xml",
-        "haarcascade_frontalface_alt2.xml",
-        "haarcascade_frontalface_alt_tree.xml"
-    ]
+faceGrabber = FaceGrabber()
 
-    detector = dlib.get_frontal_face_detector() # load face detector
-    predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
-    mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load face detector
-
-    paddingBy = 0.15 # padding by 10%
-
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY) # convert to grayscale
-
-    detected = None
-
-    for cascade in cascades:
-        cascadeClassifier = cv.CascadeClassifier(cv.data.haarcascades + cascade)
-        faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5) # detect faces
-        if len(faces) > 0:
-            detected = faces[0]
-            logging.info(f"Face detected by {cascade}")
-            break
-
-    if detected is None:
-        faces = detector(gray) # detect faces
-        if len(faces) > 0:
-            detected = faces[0]
-            detected = (detected.left(), detected.top(), detected.width(), detected.height())
-            logging.info("Face detected by dlib")
-
-    if detected is None:
-        faces = mmod(img)
-        if len(faces) > 0:
-            detected = faces[0]
-            detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
-            logging.info("Face detected by mmod")
-
-    if detected is not None: # if face detected
-        x, y, w, h = detected # grab first face
-        padW = int(paddingBy * w) # get padding width
-        padH = int(paddingBy * h) # get padding height
-        imgH, imgW, _ = img.shape # get image dims
-        x = max(0, x - padW)
-        y = max(0, y - padH)
-        w = min(imgW - x, w + 2 * padW)
-        h = min(imgH - y, h + 2 * padH)
-        x = max(0, x - (w - detected[2]) // 2) # center the face horizontally
-        y = max(0, y - (h - detected[3]) // 2) # center the face vertically
-        face = img[y:y+h, x:x+w] # crop face
-        return face
-
-    return None
-
-image = Image.open("emitest.jpeg").convert("RGB")
-face = grab_faces(np.array(image))
+image = Image.open("nnGirl.png").convert("RGB")
+face = faceGrabber.grab_faces(np.array(image))
 if face is not None:
     image = Image.fromarray(face)
 

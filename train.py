@@ -153,11 +153,11 @@ def resize_faces(inFace, outFace):
 	be saved
 	"""
 	img = cv2.imread(inFace) # read image
-	img = cv2.resize(img, (224, 224)) # resize image
 	path = os.path.basename(inFace) # get filename
 	if os.path.exists(os.path.join(outFace, path)) and cv2.imread(os.path.join(outFace, path)).shape == (224, 224, 3):
 		logging.warning(f"Face of correct dims already exists in positive class img: {inFace}!!")
 	else:
+		img = cv2.resize(img, (224, 224)) # resize image
 		os.remove(inFace)
 		if (cv2.imwrite(os.path.join(outFace), img)): # save face
 			logging.info(f"Face resized from img: {inFace}!!")
@@ -211,7 +211,7 @@ def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (
 
 	return mismatched
 
-totalFiles = [os.path.join(dp, f) for dp, dn, filenames in os.walk(dsDir) for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all files for sanity checking
+totalFiles = [os.path.join(dp, f) for dp, dn, filenames in os.walk(dsDir) for f in filenames if f.endswith((".jpg", ".jpeg", ".png")) and ".faces" not in dp] # grab all files for sanity checking, excluding .faces directory
 print(f"Total imgs: {len(totalFiles)}")
 
 posFiles = [f for f in totalFiles if "pos" in f] # grab positive class girls
@@ -219,28 +219,31 @@ negFiles = [f for f in totalFiles if "neg" in f] # grab negative class imgs
 
 print(f"Positive faces: {len(posFiles)} | Negative imgs: {len(negFiles)}") # sanity check
 
-for file in posFiles:
-	faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
-	if file not in faceDir:
-		if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
-			os.makedirs(faceDir) # if not, create it
-		grab_faces(file, faceDir) # grab faces
+userInput = input("Do you want to extract and resize faces? (yes/no): ")
+if userInput.lower() == "yes":
+	for file in posFiles:
+		faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
+		if file not in faceDir:
+			if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
+				os.makedirs(faceDir) # if not, create it
+			grab_faces(file, faceDir) # grab faces
 
-for file in negFiles:
-	faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
-	destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
-	if file not in faceDir:
-		if not os.path.exists(faceDir):
-			os.makedirs(faceDir)
-		didWeGrab = grab_faces(file, faceDir) # grab faces
-		if not didWeGrab:
-			central_crop(file, faceDir) # central crop
+	for file in negFiles:
+		faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
+		destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
+		if file not in faceDir:
+			if not os.path.exists(faceDir):
+				os.makedirs(faceDir)
+			didWeGrab = grab_faces(file, faceDir) # grab faces
+			if not didWeGrab:
+				central_crop(file, faceDir) # central crop
 
 totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all faces for sanity checking
 print(f"Total faces: {len(totalFaces)}")
 
-for face in totalFaces:
-	resize_faces(face, face) # resize faces to 224x224
+if userInput.lower() == "yes":
+	for face in totalFaces:
+		resize_faces(face, face) # resize faces to 224x224
 
 if len(totalFaces) < len(totalFiles): # sanity check
 	print("Not all faces were grabbed")
