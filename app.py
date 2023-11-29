@@ -7,6 +7,7 @@ import dlib
 import logging
 from typing import Optional
 
+
 logging.basicConfig(level=logging.INFO)
 
 def grab_faces(img: np.ndarray) -> Optional[np.ndarray]:
@@ -83,6 +84,6 @@ iface = gr.Interface(
     inputs="image",
     outputs=["text", "number", "image"],
     title="Attraction Classifier - subjective",
-    description="Takes in a (224, 224) image and outputs an attraction class: {\"pos\", \"neg\"}. Face detection, cropping, and resizing are done internally. Uploaded images are not stored by us, but may be stored by HF. Refer to their privacy policy for details."
+    description=f"Takes in a (224, 224) image and outputs an attraction class: {'pos', 'neg'}. Face detection, cropping, and resizing are done internally. Uploaded images are not stored by us, but may be stored by HF. Refer to their privacy policy for details. req = {req}"
 )
 iface.launch()
