@@ -12,6 +12,7 @@ import cv2
 import logging
 import dlib
 import gc
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 
@@ -76,7 +77,7 @@ def grab_faces(inImg, outImg) -> bool:
 
 	for cascade in cascades:
 		cascadeClassifier = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
-		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5) # detect faces
+		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=6) # detect faces
 		if len(faces) > 0:
 			detected = faces[0]
 			break
@@ -119,18 +120,20 @@ def grab_faces(inImg, outImg) -> bool:
 		x, y, w, h = detected # grab first face
 		padW = int(paddingBy * w) # get padding width
 		padH = int(paddingBy * h) # get padding height
+		imgH, imgW, _ = img.shape # get image dims
 		x = max(0, x - padW)
 		y = max(0, y - padH)
-		imgH, imgW, _ = img.shape # get image dims
-		w += min(imgW - x, w + 2 * padW)
-		h += min(imgH - y, h + 2 * padH)
+		w = min(imgW - x, w + 2 * padW)
+		h = min(imgH - y, h + 2 * padH)
+		x = max(0, x - (w - detected[2]) // 2) # center the face horizontally
+		y = max(0, y - (h - detected[3]) // 2) # center the face vertically
 		face = img[y:y+h, x:x+w] # crop face
 		path = os.path.basename(inImg) # get filename
 		if not os.path.exists(outImg): # sanity check if path itself exists before saving img
 			os.makedirs(outImg) # if not, create it
 		if os.path.exists(os.path.join(outImg, path)): # sanity check if face already exists
 			logging.warning(f"Face already exists in negative class img: {inImg}!!")
-			return False
+			return True # ^ returning True here because if a face already exists, we don't want to central-crop
 		else:
 			cv2.imwrite(os.path.join(outImg, path), face) # save face
 			return True
@@ -221,28 +224,28 @@ print(f"Positive faces: {len(posFiles)} | Negative imgs: {len(negFiles)}") # san
 
 userInput = input("Do you want to extract and resize faces? (yes/no): ")
 if userInput.lower() == "yes":
-	for file in posFiles:
+	for file in tqdm(posFiles, desc="Processing positive imgs"):
 		faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
 		if file not in faceDir:
 			if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
 				os.makedirs(faceDir) # if not, create it
 			grab_faces(file, faceDir) # grab faces
 
-	for file in negFiles:
+	for file in tqdm(negFiles, desc="Processing negative imgs"):
 		faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
 		destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
 		if file not in faceDir:
 			if not os.path.exists(faceDir):
 				os.makedirs(faceDir)
 			didWeGrab = grab_faces(file, faceDir) # grab faces
-			if not didWeGrab:
-				central_crop(file, faceDir) # central crop
+			# if not didWeGrab: # ! temporarily disabling this check and the central crop to compare results !
+			# 	central_crop(file, faceDir) # central crop
 
 totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all faces for sanity checking
 print(f"Total faces: {len(totalFaces)}")
 
 if userInput.lower() == "yes":
-	for face in totalFaces:
+	for face in tqdm(totalFaces, desc="Resizing faces"):
 		resize_faces(face, face) # resize faces to 224x224
 
 if len(totalFaces) < len(totalFiles): # sanity check
@@ -366,7 +369,7 @@ trainingArgs = TrainingArguments(
 	weight_decay=0.015,
 	num_train_epochs=10,
 	warmup_ratio=0.15,
-	lr_scheduler_type="cosine",
+	lr_scheduler_type="polynomial", # "cosine", "constant_with_warmup", "constant", "linear", "polynomial"
 	seed=69,
 	logging_steps=15,
 	load_best_model_at_end=True,
