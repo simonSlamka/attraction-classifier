@@ -1,7 +1,7 @@
 from datasets import load_dataset, ClassLabel, Image
 from PIL import Image as PILImage
 from random import randrange
-from transformers import AutoImageProcessor, DefaultDataCollator, AutoModelForImageClassification, TrainingArguments, Trainer, default_data_collator
+from transformers import AutoImageProcessor, DefaultDataCollator, AutoModelForImageClassification, TrainingArguments, Trainer, EarlyStoppingCallback, default_data_collator, AutoConfig
 import evaluate
 import numpy as np
 import wandb
@@ -14,7 +14,9 @@ import dlib
 import gc
 from tqdm import tqdm
 
-logging.basicConfig(level=logging.INFO)
+# ^ TODO: TRY SWIN
+
+logging.basicConfig(level=logging.WARNING)
 
 wandb.init(project="girl-classifier", entity="simtoonia")
 
@@ -39,7 +41,7 @@ for subdir in ["pos", "neg"]:
 				raise ValueError(f"File {file} is not an image")
 
 ds = load_dataset("imagefolder", data_dir=dsDir, split="train") #.cast_column("image", Image(decode=False))
-ds = ds.train_test_split(test_size=0.15, seed=69) # split 'em
+ds = ds.train_test_split(test_size=0.1, seed=69) # split 'em
 # ds.push_to_hub("ongkn/women", private=True)
 
 print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
@@ -139,7 +141,7 @@ def grab_faces(inImg, outImg) -> bool:
 			return True
 	else:
 		if "pos" in inImg:
-			logging.error(f"No face detected in positive class img: {inImg}!!")
+			logging.info(f"No face detected in positive class img: {inImg}!!")
 			return False
 		elif "neg" in inImg:
 			return False
@@ -163,7 +165,8 @@ def resize_faces(inFace, outFace):
 		img = cv2.resize(img, (224, 224)) # resize image
 		os.remove(inFace)
 		if (cv2.imwrite(os.path.join(outFace), img)): # save face
-			logging.info(f"Face resized from img: {inFace}!!")
+			# logging.info(f"Face resized from img: {inFace}!!")
+			pass
 
 def central_crop(inImg, outImg):
 	"""
@@ -224,17 +227,22 @@ print(f"Positive faces: {len(posFiles)} | Negative imgs: {len(negFiles)}") # san
 
 userInput = input("Do you want to extract and resize faces? (yes/no): ")
 if userInput.lower() == "yes":
+	processedFiles = []
+	if os.path.exists("processed.txt"):
+		with open("processed.txt", "r") as file:
+			processedFiles = file.read().splitlines()
+
 	for file in tqdm(posFiles, desc="Processing positive imgs"):
-		faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
-		if file not in faceDir:
+		if file not in processedFiles:
+			faceDir = os.path.join(dsDir, ".faces", "pos") # positive class face dir
 			if not os.path.exists(faceDir): # sanity check if path itself exists before saving img
 				os.makedirs(faceDir) # if not, create it
 			grab_faces(file, faceDir) # grab faces
 
 	for file in tqdm(negFiles, desc="Processing negative imgs"):
-		faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
-		destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
-		if file not in faceDir:
+		if file not in processedFiles:
+			faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
+			destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
 			if not os.path.exists(faceDir):
 				os.makedirs(faceDir)
 			didWeGrab = grab_faces(file, faceDir) # grab faces
@@ -246,7 +254,13 @@ print(f"Total faces: {len(totalFaces)}")
 
 if userInput.lower() == "yes":
 	for face in tqdm(totalFaces, desc="Resizing faces"):
-		resize_faces(face, face) # resize faces to 224x224
+		if face not in processedFiles:
+			resize_faces(face, face) # resize faces to 224x224
+			processedFiles.append(face)
+
+	with open("processed.txt", "a") as file:
+		for item in processedFiles:
+			file.write("%s\n" % item)
 
 if len(totalFaces) < len(totalFiles): # sanity check
 	print("Not all faces were grabbed")
@@ -258,7 +272,7 @@ if len(mismatched) > 0:
 	raise ValueError("Non-(224, 224) images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
 faceDs = load_dataset("imagefolder", data_dir=f"{dsDir}/.faces", split="train")
-faceDs = faceDs.train_test_split(test_size=0.15, seed=69)
+faceDs = faceDs.train_test_split(test_size=0.1, seed=69)
 ds = faceDs
 del faceDs
 gc.collect()
@@ -355,27 +369,37 @@ def compute_metrics(evalPred):
 
 	return accuracy.compute(predictions=preds, references=labels)
 
-model = AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k", num_labels=len(labels), id2label=id2label, label2id=label2id) # load base model
+config = AutoConfig.from_pretrained("google/vit-base-patch16-224-in21k", num_labels=len(labels), id2label=id2label, label2id=label2id, dropout_rate=0.5) # load config
+model = AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k", config=config) # load base model
 
 trainingArgs = TrainingArguments(
 	output_dir="./out",
 	remove_unused_columns=False,
-	evaluation_strategy="epoch",
-	save_strategy="epoch",
+	evaluation_strategy="steps",
+	save_strategy="steps",
 	learning_rate=5e-5,
 	per_device_train_batch_size=16,
 	per_device_eval_batch_size=16,
 	gradient_accumulation_steps=4,
 	weight_decay=0.015,
-	num_train_epochs=10,
+	num_train_epochs=15,
 	warmup_ratio=0.15,
-	lr_scheduler_type="polynomial", # "cosine", "constant_with_warmup", "constant", "linear", "polynomial"
+	lr_scheduler_type="linear", # "polynomial", "constant_with_warmup", "constant", "cosine", "polynomial"
 	seed=69,
+	save_steps=15,
+	eval_steps=15,
+	save_safetensors=True,
+	save_total_limit=5,
 	logging_steps=15,
 	load_best_model_at_end=True,
 	metric_for_best_model="accuracy",
 	push_to_hub=True,
 	hub_model_id="attraction-classifier"
+)
+
+earlyStop = EarlyStoppingCallback(
+	early_stopping_patience=5,
+	early_stopping_threshold=0.01,
 )
 
 trainer = Trainer(
@@ -385,7 +409,8 @@ trainer = Trainer(
 	train_dataset=ds["train"],
 	eval_dataset=ds["test"],
 	tokenizer=imgProcessor,
-	compute_metrics=compute_metrics
+	compute_metrics=compute_metrics,
+	callbacks=[earlyStop]
 )
 
 trainer.train()

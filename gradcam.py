@@ -79,7 +79,7 @@ def reshape_transform_vit_huggingface(x):
 
 faceGrabber = FaceGrabber()
 
-image = Image.open("red2.jpg").convert("RGB")
+image = Image.open("Screenshot from 2023-12-04 15-09-43.png").convert("RGB")
 face = faceGrabber.grab_faces(np.array(image))
 if face is not None:
     image = Image.fromarray(face)
@@ -100,14 +100,15 @@ dff_image = run_dff_on_image(model=model,
                             img_pil=image_resized,
                             img_tensor=tensor_resized,
                             reshape_transform=reshape_transform_vit_huggingface,
-                            n_components=3,
-                            top_k=3,
-                            threshold=0)
+                            n_components=5,
+                            top_k=10,
+                            threshold=0,
+                            output_size=None) #(500, 500))
 cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
 cv.imshow("DFF Image", cv.cvtColor(dff_image, cv.COLOR_BGR2RGB))
-cv.resizeWindow("DFF Image", 1200, 1200)
-cv.waitKey(0)
-cv.destroyAllWindows()
+cv.resizeWindow("DFF Image", 2500, 700)
+# cv.waitKey(0)
+# cv.destroyAllWindows()
 grad_cam_image = run_grad_cam_on_image(model=model,
                                     target_layer=target_layer_gradcam,
                                     targets_for_gradcam=targets_for_gradcam,
@@ -117,7 +118,7 @@ grad_cam_image = run_grad_cam_on_image(model=model,
                                     threshold=0)
 cv.namedWindow("Grad-CAM Image", cv.WINDOW_KEEPRATIO)
 cv.imshow("Grad-CAM Image", grad_cam_image)
-cv.resizeWindow("Grad-CAM Image", 1200, 1200)
+cv.resizeWindow("Grad-CAM Image", 2000, 1250)
 cv.waitKey(0)
 cv.destroyAllWindows()
 print_top_categories(model, tensor_resized)

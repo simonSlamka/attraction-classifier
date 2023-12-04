@@ -22,7 +22,7 @@ def grab_faces(img: np.ndarray) -> Optional[np.ndarray]:
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
     mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load face detector
 
-    paddingBy = 0.15 # padding by 15%
+    paddingBy = 0.1 # padding by 10%
 
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY) # convert to grayscale
 
@@ -30,7 +30,7 @@ def grab_faces(img: np.ndarray) -> Optional[np.ndarray]:
 
     for cascade in cascades:
         cascadeClassifier = cv.CascadeClassifier(cv.data.haarcascades + cascade)
-        faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5) # detect faces
+        faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5) # detect faces
         if len(faces) > 0:
             detected = faces[0]
             logging.info(f"Face detected by {cascade}")

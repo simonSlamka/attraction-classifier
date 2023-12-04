@@ -18,23 +18,17 @@ class FaceGrabber:
         self.detector = dlib.get_frontal_face_detector() # load face detector
         self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks_GTX.dat") # load face predictor
         self.mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load face detector
-        self.paddingBy = 0.15 # padding by 15%
+        self.paddingBy = 0.1 # padding by 10%
 
-    def grab_faces(self, img: np.ndarray) -> Optional[np.ndarray]:
-        gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY) # convert to grayscale
+    def grab_faces(self, img: np.ndarray, bGray: bool = False) -> Optional[np.ndarray]:
+
+        if bGray:
+            img = cv.cvtColor(img, cv.COLOR_BGR2GRAY) # convert to grayscale
 
         detected = None
 
-        for cascade in self.cascades:
-            cascadeClassifier = cv.CascadeClassifier(cv.data.haarcascades + cascade)
-            faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5) # detect faces
-            if len(faces) > 0:
-                detected = faces[0]
-                logging.info(f"Face detected by {cascade}")
-                break
-
         if detected is None:
-            faces = self.detector(gray) # detect faces
+            faces = self.detector(img) # detect faces
             if len(faces) > 0:
                 detected = faces[0]
                 detected = (detected.left(), detected.top(), detected.width(), detected.height())
@@ -46,6 +40,14 @@ class FaceGrabber:
                 detected = faces[0]
                 detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
                 logging.info("Face detected by mmod")
+
+        for cascade in self.cascades:
+            cascadeClassifier = cv.CascadeClassifier(cv.data.haarcascades + cascade)
+            faces = cascadeClassifier.detectMultiScale(img, scaleFactor=1.5, minNeighbors=5) # detect faces
+            if len(faces) > 0:
+                detected = faces[0]
+                logging.info(f"Face detected by {cascade}")
+                break
 
         if detected is not None: # if face detected
             x, y, w, h = detected # grab first face
