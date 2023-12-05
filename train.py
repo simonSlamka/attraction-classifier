@@ -390,7 +390,7 @@ trainingArgs = TrainingArguments(
 	gradient_accumulation_steps=4,
 	weight_decay=0.01,
 	num_train_epochs=15,
-	warmup_ratio=0.15,
+	warmup_ratio=0.1,
 	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear", "polynomial"
 	seed=69,
 	save_steps=15,
@@ -405,7 +405,7 @@ trainingArgs = TrainingArguments(
 	hub_model_id="attraction-classifier"
 )
 
-earlyStop = EarlyStoppingCallback(
+earlyPullOut = EarlyStoppingCallback(
 	early_stopping_patience=10,
 	#early_stopping_threshold=0.01 # disabled for now
 )
@@ -418,7 +418,7 @@ trainer = Trainer(
 	eval_dataset=ds["test"],
 	tokenizer=imgProcessor,
 	compute_metrics=compute_metrics,
-	callbacks=[earlyStop]
+	callbacks=[earlyPullOut]
 )
 
 trainer.train()
