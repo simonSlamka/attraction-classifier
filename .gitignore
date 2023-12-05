@@ -1,6 +1,7 @@
 venv/
 wandb/
 __pycache__/
+logs/
 *.jpg
 *.png
 *.jpeg
