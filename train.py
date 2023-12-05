@@ -11,7 +11,8 @@ import os
 import wandb
 from wandb.keras import WandbMetricsLogger, WandbModelCheckpoint
 import logging
-from typing import List, Tuple
+from typing import Tuple
+from huggingface_hub import push_to_hub_keras
 
 wandb.init(project="girl-classifier", entity="simtoonia")
 
@@ -22,29 +23,40 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Model:
-	def __init__(self, config: dict, num_classes: int) -> None:
+	def __init__(self, config: dict, numClasses: int) -> None:
 		self.config = config
+		self.numClasses = numClasses
 
 	def create_model(self) -> Sequential:
 		model = Sequential([
-			layers.Rescaling(1./255, input_shape=(config["img_height"], config["img_width"], 3)),
+			layers.Rescaling(1./255, input_shape=(config["imgHeight"], config["imgWidth"], 3)),
+			layers.Conv2D(8, 3, padding=config["padding"], activation=config["activation"]),
 			layers.Conv2D(16, 3, padding=config["padding"], activation=config["activation"]),
 			layers.MaxPooling2D(),
+			layers.Conv2D(16, 3, padding=config["padding"], activation=config["activation"]),
 			layers.Conv2D(32, 3, padding=config["padding"], activation=config["activation"]),
 			layers.MaxPooling2D(),
+			layers.Conv2D(32, 3, padding=config["padding"], activation=config["activation"]),
 			layers.Conv2D(64, 3, padding=config["padding"], activation=config["activation"]),
+			layers.Conv2D(64, 3, padding=config["padding"], activation=config["activation"]),
+			layers.MaxPooling2D(),
+			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
+			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
 			layers.MaxPooling2D(),
 			layers.Dropout(0.2),
 			layers.Flatten(),
+			layers.Dense(256, activation=config["activation"]),
 			layers.Dense(128, activation=config["activation"]),
-			layers.Dense(num_classes)
+			layers.Dense(64, activation=config["activation"]),
+			layers.Dense(32, activation=config["activation"]),
+			layers.Dense(self.numClasses)
 		])
 		print(model.summary())
 		return model
 
 def check_data(path: str) -> None:
-	pos = list(data_dir.glob(f"{path}pos/*"))
-	neg = list(data_dir.glob(f"{path}neg/*"))
+	pos = list(path.glob("pos/*"))
+	neg = list(path.glob("neg/*"))
 	logging.info(f"Found {len(pos)} positive samples")
 	logging.info(f"Found {len(neg)} negative samples")
 	logging.info(f"Total: {len(pos) + len(neg)} samples")
@@ -81,7 +93,7 @@ def create_datasets(path: str) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
 
 def config_autotune_and_caching(trainDs: tf.data.Dataset, valDs: tf.data.Dataset) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
 	AUTOTUNE = tf.data.AUTOTUNE
-	trainDs = trainDs.cache().sbuffle(1000).prefetch(buffer_size=AUTOTUNE)
+	trainDs = trainDs.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
 	valDs = valDs.cache().prefetch(buffer_size=AUTOTUNE)
 	return trainDs, valDs
 
@@ -110,20 +122,20 @@ config = {
 	"optimizer": "adam",
 	"metrics": ["accuracy"],
 	"loss": "sparse_categorical_crossentropy",
-	"epochs": 15
+	"epochs": 10
 }
 
 wandb.config.update(config)
 
 
 if __name__ == "__main__":
-	dataDir = pathlib.Path("dir/to/data")
+	dataDir = pathlib.Path("/home/simtoon/smtn_girls_likeOrNot")
 	check_data(dataDir)
 	trainDs, valDs = create_datasets(dataDir)
 	trainDs, valDs = config_autotune_and_caching(trainDs, valDs)
 	normDs = normalize(trainDs, valDs)
 	dataAug = create_augmentation()
-	model = Model(config, len(trainDs.class_names)).create_model()
+	model = Model(config, 2).create_model()
 	model.compile(optimizer=config["optimizer"], loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=config["metrics"])
 	ckptCallback = tf.keras.callbacks.ModelCheckpoint(
 		filepath="checkpoints/",
@@ -157,8 +169,9 @@ if __name__ == "__main__":
 	plt.plot(valLoss, label="Validation Loss")
 	plt.legend(loc="upper right")
 	plt.show()
-	model.save("model.h5")
+	model.save("model.keras")
 	artifact = wandb.Artifact("girl-classifier", type="model")
-	artifact.add_file("model.h5")
+	artifact.add_file("model.keras")
 	wandb.log_artifact(artifact)
-	model.save_weights("weights.h5")
+	# model.save_weights("weights.keras")
+	push_to_hub_keras(repo_id="ongkn/attraction-classifier-kerasCNN", log_dir="logs/", model=model)
