@@ -12,44 +12,59 @@ import wandb
 from wandb.keras import WandbMetricsLogger, WandbModelCheckpoint
 import logging
 from typing import Tuple
-from huggingface_hub import push_to_hub_keras
+from huggingface_hub import push_to_hub_keras as push_to_ph
 
-wandb.init(project="girl-classifier", entity="simtoonia")
+wandb.init(project="girl-classifier", entity="simtoonia") # 😏 init our ... tape
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3" # SHUT UP, TF! I DON'T CARE ABOUT YOUR WARNINGS!
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO) # loggie loggie loggieeeee
 
 
 
-class Model:
+class Model: # cue our protagonist, a supersexy model
 	def __init__(self, config: dict, numClasses: int) -> None:
-		self.config = config
-		self.numClasses = numClasses
+		self.config = config # she's got a config
+		self.numClasses = numClasses # and she's got a number of classes ... 2, to be exact ... this says how many elements she's gonna spit out
 
 	def create_model(self) -> Sequential:
 		model = Sequential([
-			layers.Rescaling(1./255, input_shape=(config["imgHeight"], config["imgWidth"], 3)),
+			layers.Rescaling(1./255, input_shape=(config["imgHeight"], config["imgWidth"], 3)), # (224, 224, 3)
+			layers.Conv2D(8, 3, padding=config["padding"]), # padding: same -- no activation 'cause we're mean
+			layers.BatchNormalization(), # meanie >:(
 			layers.Conv2D(8, 3, padding=config["padding"], activation=config["activation"]),
-			layers.Conv2D(16, 3, padding=config["padding"], activation=config["activation"]),
-			layers.MaxPooling2D(),
-			layers.Conv2D(16, 3, padding=config["padding"], activation=config["activation"]),
+			layers.Conv2D(16, 3, padding=config["padding"], activation=config["activation"]), # padding: same -- activation: relulu ... "relulu" ... hm, reminds me of ... someone ...
+			layers.Dropout(0.2), # a little bit of violence never hurt anyone
+			layers.MaxPooling2D(), # 224 -> 112
+			layers.Conv2D(16, 3, padding=config["padding"]),
+			layers.BatchNormalization(), # gimme some of that sweet, sweet regularization
 			layers.Conv2D(32, 3, padding=config["padding"], activation=config["activation"]),
-			layers.MaxPooling2D(),
+			layers.MaxPooling2D(), # 112 -> 56
 			layers.Conv2D(32, 3, padding=config["padding"], activation=config["activation"]),
+			layers.Conv2D(64, 3, padding=config["padding"]),
+			layers.BatchNormalization(), # more regularization, please
 			layers.Conv2D(64, 3, padding=config["padding"], activation=config["activation"]),
-			layers.Conv2D(64, 3, padding=config["padding"], activation=config["activation"]),
-			layers.MaxPooling2D(),
+			layers.MaxPooling2D(), # 56 -> 28
+			layers.Conv2D(128, 3, padding=config["padding"]),
+			layers.BatchNormalization(), # oh, yes!
 			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
+			layers.MaxPooling2D(), # 28 -> 14
+			# STILL NOT DEEP ENOUGH?????!
+			layers.Conv2D(128, 3, padding=config["padding"]),
+			layers.BatchNormalization(), # AAAAHH!
 			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
-			layers.MaxPooling2D(),
-			layers.Dropout(0.2),
-			layers.Flatten(),
+			layers.Dropout(0.5), # rough 'er up a bit more to make 'er spit out some of the ... cells
+			layers.Flatten(), # now, grab a rolling pin, look at her intentely, and flatten 'er out so that she's all in one dim
+			layers.Dense(8192, activation=config["activation"]), # here, we're linearly transforming 'er, with relu as the bouncer
+			layers.Dense(4096, activation=config["activation"]),
+			layers.Dense(3072, activation=config["activation"]),
+			layers.Dense(2048, activation=config["activation"]),
+			layers.Dense(1024, activation=config["activation"]), # STILL NOT DENSE ENOUGH??!
+			layers.Dense(512, activation=config["activation"]),
 			layers.Dense(256, activation=config["activation"]),
 			layers.Dense(128, activation=config["activation"]),
 			layers.Dense(64, activation=config["activation"]),
-			layers.Dense(32, activation=config["activation"]),
-			layers.Dense(self.numClasses)
+			layers.Dense(self.numClasses, activation="sigmoid") # finally, we're gonna make 'er spit out 'er answer over the sigmoid
 		])
 		print(model.summary())
 		return model
@@ -68,15 +83,15 @@ def create_datasets(path: str) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
 		path,
 		validation_split=0.1,
 		subset="training",
-		seed=69,
+		seed=69, # noice!
 		image_size=(config["imgHeight"], config["imgWidth"]),
 		batch_size=config["batchSize"]
 	)
 	valDs = tf.keras.utils.image_dataset_from_directory(
 		path,
-		validation_split=0.1,
+		validation_split=0.1, # imo, 10% is a good enough share for validation
 		subset="validation",
-		seed=69,
+		seed=69, # lol
 		image_size=(config["imgHeight"], config["imgWidth"]),
 		batch_size=config["batchSize"]
 	)
@@ -92,63 +107,64 @@ def create_datasets(path: str) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
 	return trainDs, valDs
 
 def config_autotune_and_caching(trainDs: tf.data.Dataset, valDs: tf.data.Dataset) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-	AUTOTUNE = tf.data.AUTOTUNE
-	trainDs = trainDs.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
-	valDs = valDs.cache().prefetch(buffer_size=AUTOTUNE)
+	AUTOTUNE = tf.data.AUTOTUNE # not *that* kind of auto tune
+	trainDs = trainDs.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE) # cache and prefetch trainDs to improve performance
+	valDs = valDs.cache().prefetch(buffer_size=AUTOTUNE) # cache and prefetch valDs to improve performance
 	return trainDs, valDs
 
 def normalize(trainDs: tf.data.Dataset, valDs: tf.data.Dataset) -> tf.data.Dataset:
-	normLayer = layers.Rescaling(1./255)
-	normDs = trainDs.map(lambda x, y: (normLayer(x), y))
+	normLayer = layers.Rescaling(1./255) # normalize to [0, 1]
+	normDs = trainDs.map(lambda x, y: (normLayer(x), y)) # apply normalization layer to trainDs
 	return normDs
 
 def create_augmentation() -> Sequential:
 	dataAug = keras.Sequential(
 		[
-			layers.RandomFlip("horizontal", input_shape=(config["imgHeight"], config["imgWidth"], 3)),
-			layers.RandomRotation(0.1),
-			layers.RandomZoom(0.1)
+			layers.RandomFlip("horizontal", input_shape=(config["imgHeight"], config["imgWidth"], 3)), # flip 'er around and make 'er horizontal
+			layers.RandomRotation(0.1), # then, rotate 'er a bit
+			layers.RandomZoom(0.1) # zoom 'er in a bit so that we can see 'er parts better
 		]
 	)
 	return dataAug
 
 
 config = {
-	"imgHeight": 224,
-	"imgWidth": 224,
-	"batchSize": 16,
-	"padding": "same",
-	"activation": "relu",
-	"optimizer": "adam",
-	"metrics": ["accuracy"],
-	"loss": "sparse_categorical_crossentropy",
-	"epochs": 10
+	"imgHeight": 224, # decided 'cause one of Google's ViTs uses 224x224
+	"imgWidth": 224, # same as above
+	"batchSize": 16, # yeah, I'm poor
+	"padding": "same", # I want all the convies layers to have the same output size as their input
+	"activation": "relu", # Why is relu always so popular at parties? 'cause she always brings positive vibes!
+	"optimizer": "adam", # Jensen!
+	"metrics": ["accuracy"], # I'm gonna make you scream my na... "accuracy" ... yeah, that's what I meant ... "accuracy" ... definitely ...
+	"loss": "sparse_categorical_crossentropy", # kids, cross entropy is just a fancy way of saying the totally not fancy "negative logarithmic likelihood loss"
+	"epochs": 10 # started with 10 epochs, but I think I'll need more
 }
 
 wandb.config.update(config)
 
 
 if __name__ == "__main__":
-	dataDir = pathlib.Path("/home/simtoon/smtn_girls_likeOrNot")
+	dataDir = pathlib.Path("/home/simtoon/smtn_girls_likeOrNot") # hehe, I'm a simp ... you totally don't need to lock your daughter up in a tower to keep her out of my visual field ... totally not ...
 	check_data(dataDir)
 	trainDs, valDs = create_datasets(dataDir)
 	trainDs, valDs = config_autotune_and_caching(trainDs, valDs)
 	normDs = normalize(trainDs, valDs)
-	dataAug = create_augmentation()
+	dataAug = create_augmentation() # my vision is augmented ... 'cause ... you know ... more data ... more ... vision ... more ... augmentation ... yeah ...
 	model = Model(config, 2).create_model()
-	model.compile(optimizer=config["optimizer"], loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=config["metrics"])
+	model.compile(optimizer=config["optimizer"], loss=config["loss"], metrics=config["metrics"])
 	ckptCallback = tf.keras.callbacks.ModelCheckpoint(
 		filepath="checkpoints/",
 		save_weights_only=True,
 		verbose=1,
 		save_freq="epoch"
 	)
-	tbCallback = tf.keras.callbacks.TensorBoard(log_dir="logs/", histogram_freq=1)
-	trained = model.fit(
+	tbCallback = tf.keras.callbacks.TensorBoard(log_dir="logs/", histogram_freq=1) # for diagnosing model performance
+	earlyPullOut = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=10) # we can't afford to finish if we're not doing well ... we're poor, remember? ... we can't afford to waste time on a kid who's not gonna make it
+	trained = model.fit( # try to fit our ... data ... into ... her ... uhm, model ... yeah ...
 		trainDs,
 		validation_data=valDs,
-		epochs=config["epochs"],
-		callbacks=[ckptCallback, tbCallback, WandbMetricsLogger(log_freq=5), WandbModelCheckpoint("checkpoints/")],
+		epochs=config["epochs"], # think of it as the number of times you're gonna try ... fit it in ...
+		callbacks=[ckptCallback, tbCallback, WandbMetricsLogger(log_freq=5), WandbModelCheckpoint("checkpoints/"), earlyPullOut]
 	)
 	acc = trained.history["accuracy"]
 	valAcc = trained.history["val_accuracy"]
@@ -158,7 +174,7 @@ if __name__ == "__main__":
 	valLoss = trained.history["val_loss"]
 	minLoss = min(loss)
 	minValLoss = min(valLoss)
-	wandb.log({"top_accuracy": topAcc, "top_val_accuracy": topValAcc, "min_loss": minLoss, "min_val_loss": minValLoss})
+	wandb.log({"top_accuracy": topAcc, "top_val_accuracy": topValAcc, "min_loss": minLoss, "min_val_loss": minValLoss}) # sync to W&B
 	plt.figure(figsize=(8, 8))
 	plt.subplot(1, 2, 1)
 	plt.plot(acc, label="Training Accuracy")
@@ -169,9 +185,9 @@ if __name__ == "__main__":
 	plt.plot(valLoss, label="Validation Loss")
 	plt.legend(loc="upper right")
 	plt.show()
-	model.save("model.keras")
-	artifact = wandb.Artifact("girl-classifier", type="model")
-	artifact.add_file("model.keras")
-	wandb.log_artifact(artifact)
-	# model.save_weights("weights.keras")
-	push_to_hub_keras(repo_id="ongkn/attraction-classifier-kerasCNN", log_dir="logs/", model=model)
+	model.save("model.keras") # stick a fork in her temporal lobe, connect it to a disk, and extract the model
+	artifact = wandb.Artifact("girl-classifier", type="model") # create an artifact object
+	artifact.add_file("model.keras") # add the model to the artifact
+	wandb.log_artifact(artifact) # spray the artifact all over W&B
+	# model.save_weights("weights.keras") # oh, yeah, baby, spray those weights all over me!
+	push_to_ph(repo_id="ongkn/attraction-classifier-kerasCNN", log_dir="logs/", model=model) # last, but not least, push to PH
