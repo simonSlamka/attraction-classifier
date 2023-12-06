@@ -242,17 +242,19 @@ if userInput.lower() == "yes":
 				os.makedirs(faceDir) # if not, create it
 			if grab_faces(file, faceDir): # grab faces
 				processedFiles.append(file)
-	for file in tqdm(negFiles, desc="Processing negative imgs"):
-		if file not in processedFiles:
-			faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
-			destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
-			if not os.path.exists(faceDir):
-				os.makedirs(faceDir)
-			didWeGrab = grab_faces(file, faceDir) # grab faces
-			if didWeGrab:
-				processedFiles.append(file)
-			# if not didWeGrab: # ! temporarily disabling this check and the central crop to compare results !
-			# 	central_crop(file, faceDir) # central crop
+
+	if input("Also neg? (yes/no): ").lower() == "yes":
+		for file in tqdm(negFiles, desc="Processing negative imgs"):
+			if file not in processedFiles:
+				faceDir = os.path.join(dsDir, ".faces", "neg") # negative class face dir
+				destPath = os.path.join(faceDir, os.path.basename(file)) # get dest path
+				if not os.path.exists(faceDir):
+					os.makedirs(faceDir)
+				didWeGrab = grab_faces(file, faceDir) # grab faces
+				if didWeGrab:
+					processedFiles.append(file)
+				# if not didWeGrab: # ! temporarily disabling this check and the central crop to compare results !
+				# 	central_crop(file, faceDir) # central crop
 
 totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all faces for sanity checking
 print(f"Total faces: {len(totalFaces)}")
