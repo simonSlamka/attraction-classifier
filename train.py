@@ -13,10 +13,11 @@ from wandb.keras import WandbMetricsLogger, WandbModelCheckpoint
 import logging
 from typing import Tuple
 from huggingface_hub import push_to_hub_keras as push_to_ph
+from random import randint
 
 wandb.init(project="girl-classifier", entity="simtoonia") # 😏 init our ... tape
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3" # SHUT UP, TF! I DON'T CARE ABOUT YOUR WARNINGS!
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "4" # SHUT UP, TF! I DON'T CARE ABOUT YOUR WARNINGS!
 
 logging.basicConfig(level=logging.INFO) # loggie loggie loggieeeee
 
@@ -55,16 +56,15 @@ class Model: # cue our protagonist, a supersexy model
 			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
 			layers.Dropout(0.5), # rough 'er up a bit more to make 'er spit out some of the ... cells
 			layers.Flatten(), # now, grab a rolling pin, look at her intentely, and flatten 'er out so that she's all in one dim
-			layers.Dense(8192, activation=config["activation"]), # here, we're linearly transforming 'er, with relu as the bouncer
-			layers.Dense(4096, activation=config["activation"]),
-			layers.Dense(3072, activation=config["activation"]),
-			layers.Dense(2048, activation=config["activation"]),
-			layers.Dense(1024, activation=config["activation"]), # STILL NOT DENSE ENOUGH??!
-			layers.Dense(512, activation=config["activation"]),
-			layers.Dense(256, activation=config["activation"]),
+			layers.Dense(196, activation=config["activation"]),
+			layers.Dense(156, activation=config["activation"]),
 			layers.Dense(128, activation=config["activation"]),
 			layers.Dense(64, activation=config["activation"]),
-			layers.Dense(self.numClasses, activation="sigmoid") # finally, we're gonna make 'er spit out 'er answer over the sigmoid
+			layers.Dense(32, activation=config["activation"]),
+			layers.Dense(16, activation=config["activation"]),
+			layers.Dense(8, activation=config["activation"]),
+			layers.Dense(4, activation=config["activation"]),
+			layers.Dense(self.numClasses, activation="tanh") # finally, we're gonna make 'er spit out 'er answer over the sigmoid
 		])
 		print(model.summary())
 		return model
@@ -75,8 +75,8 @@ def check_data(path: str) -> None:
 	logging.info(f"Found {len(pos)} positive samples")
 	logging.info(f"Found {len(neg)} negative samples")
 	logging.info(f"Total: {len(pos) + len(neg)} samples")
-	PIL.Image.open(str(pos[0])).convert("RGB").resize((224, 224)) # pos class sanity check
-	PIL.Image.open(str(neg[0])).convert("RGB").resize((224, 224)) # neg class sanity check
+	PIL.Image.open(str(pos[randint(0, len(pos))])).convert("RGB").resize((224, 224)) # pos class sanity check
+	PIL.Image.open(str(neg[randint(0, len(neg))])).convert("RGB").resize((224, 224)) # neg class sanity check
 
 def create_datasets(path: str) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
 	trainDs = tf.keras.utils.image_dataset_from_directory(
@@ -97,13 +97,14 @@ def create_datasets(path: str) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
 	)
 	logging.info(f"Found '{trainDs.class_names}' classes")
 	logging.info(f"Found {len(trainDs.class_names)} classes")
-	plt.figure(figsize=(10, 10))
+	plt.figure(figsize=(20, 20))
 	for images, labels in trainDs.take(1):
-		for i in range(9):
-			ax = plt.subplot(3, 3, i + 1)
+		for i in range(15):
+			plt.subplot(3, 5, i + 1)
 			plt.imshow(images[i].numpy().astype("uint8"))
 			plt.title(trainDs.class_names[labels[i]])
 			plt.axis("off")
+		plt.show()
 	return trainDs, valDs
 
 def config_autotune_and_caching(trainDs: tf.data.Dataset, valDs: tf.data.Dataset) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
@@ -137,14 +138,14 @@ config = {
 	"optimizer": "adam", # Jensen!
 	"metrics": ["accuracy"], # I'm gonna make you scream my na... "accuracy" ... yeah, that's what I meant ... "accuracy" ... definitely ...
 	"loss": "sparse_categorical_crossentropy", # kids, cross entropy is just a fancy way of saying the totally not fancy "negative logarithmic likelihood loss"
-	"epochs": 10 # started with 10 epochs, but I think I'll need more
+	"epochs": 20 # started with 20 epochs, but I think I'll need more
 }
 
 wandb.config.update(config)
 
 
 if __name__ == "__main__":
-	dataDir = pathlib.Path("/home/simtoon/smtn_girls_likeOrNot") # hehe, I'm a simp ... you totally don't need to lock your daughter up in a tower to keep her out of my visual field ... totally not ...
+	dataDir = pathlib.Path("/home/simtoon/smtn_girls_likeOrNot/.faces") # hehe, I'm a simp ... you totally don't need to lock your daughter up in a tower to keep her out of my visual field ... totally not ...
 	check_data(dataDir)
 	trainDs, valDs = create_datasets(dataDir)
 	trainDs, valDs = config_autotune_and_caching(trainDs, valDs)
