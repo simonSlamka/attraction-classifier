@@ -15,6 +15,7 @@ from typing import Tuple
 from huggingface_hub import push_to_hub_keras as push_to_ph
 from random import randint
 
+
 wandb.init(project="girl-classifier", entity="simtoonia") # 😏 init our ... tape
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "4" # SHUT UP, TF! I DON'T CARE ABOUT YOUR WARNINGS!
@@ -50,7 +51,6 @@ class Model: # cue our protagonist, a supersexy model
 			layers.BatchNormalization(), # oh, yes!
 			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
 			layers.MaxPooling2D(), # 28 -> 14
-			# STILL NOT DEEP ENOUGH?????!
 			layers.Conv2D(128, 3, padding=config["padding"]),
 			layers.BatchNormalization(), # AAAAHH!
 			layers.Conv2D(128, 3, padding=config["padding"], activation=config["activation"]),
@@ -64,7 +64,7 @@ class Model: # cue our protagonist, a supersexy model
 			layers.Dense(16, activation=config["activation"]),
 			layers.Dense(8, activation=config["activation"]),
 			layers.Dense(4, activation=config["activation"]),
-			layers.Dense(self.numClasses, activation="tanh") # finally, we're gonna make 'er spit out 'er answer over the sigmoid
+			layers.Dense(self.numClasses, activation="tanh") # finally, we're gonna make 'er spit out 'er answer over the tanh
 		])
 		print(model.summary())
 		return model
@@ -164,7 +164,7 @@ if __name__ == "__main__":
 	trained = model.fit( # try to fit our ... data ... into ... her ... uhm, model ... yeah ...
 		trainDs,
 		validation_data=valDs,
-		epochs=config["epochs"], # think of it as the number of times you're gonna try ... fit it in ...
+		epochs=config["epochs"], # think of it as the number of times you're gonna try to ... fit it in ...
 		callbacks=[ckptCallback, tbCallback, WandbMetricsLogger(log_freq=5), WandbModelCheckpoint("checkpoints/"), earlyPullOut]
 	)
 	acc = trained.history["accuracy"]
