@@ -14,6 +14,9 @@ import logging
 from typing import Tuple
 from huggingface_hub import push_to_hub_keras as push_to_ph
 from random import randint
+from sklearn import svm
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from joblib import dump
 
 
 wandb.init(project="girl-classifier", entity="simtoonia") # 😏 init our ... tape
@@ -63,8 +66,7 @@ class Model: # cue our protagonist, a supersexy model
 			layers.Dense(32, activation=config["activation"]),
 			layers.Dense(16, activation=config["activation"]),
 			layers.Dense(8, activation=config["activation"]),
-			layers.Dense(4, activation=config["activation"]),
-			layers.Dense(self.numClasses, activation="tanh") # finally, we're gonna make 'er spit out 'er answer over the tanh
+			layers.Dense(4), # no activation since the output is gonna be shoved right down an SVM's throat
 		])
 		print(model.summary())
 		return model
@@ -128,6 +130,15 @@ def create_augmentation() -> Sequential:
 	)
 	return dataAug
 
+def pull_feats_and_labels(ds: tf.data.Dataset) -> Tuple[np.ndarray, np.ndarray]:
+	featExtractor = keras.Model(inputs=model.inputs, outputs=model.layers[-1].output)
+	feats = []
+	labels = []
+	for x, y in ds:
+		batchFeats = featExtractor.predict(x)
+		feats.append(batchFeats)
+		labels.append(y)
+	return np.concatenate(feats), np.concatenate(labels)
 
 config = {
 	"imgHeight": 224, # decided 'cause one of Google's ViTs uses 224x224
@@ -167,25 +178,15 @@ if __name__ == "__main__":
 		epochs=config["epochs"], # think of it as the number of times you're gonna try to ... fit it in ...
 		callbacks=[ckptCallback, tbCallback, WandbMetricsLogger(log_freq=5), WandbModelCheckpoint("checkpoints/"), earlyPullOut]
 	)
-	acc = trained.history["accuracy"]
-	valAcc = trained.history["val_accuracy"]
-	topAcc = max(acc)
-	topValAcc = max(valAcc)
-	loss = trained.history["loss"]
-	valLoss = trained.history["val_loss"]
-	minLoss = min(loss)
-	minValLoss = min(valLoss)
-	wandb.log({"top_accuracy": topAcc, "top_val_accuracy": topValAcc, "min_loss": minLoss, "min_val_loss": minValLoss}) # sync to W&B
-	plt.figure(figsize=(8, 8))
-	plt.subplot(1, 2, 1)
-	plt.plot(acc, label="Training Accuracy")
-	plt.plot(valAcc, label="Validation Accuracy")
-	plt.legend(loc="lower right")
-	plt.subplot(1, 2, 2)
-	plt.plot(loss, label="Training Loss")
-	plt.plot(valLoss, label="Validation Loss")
-	plt.legend(loc="upper right")
-	plt.show()
+	trainFeats, trainLabels = pull_feats_and_labels(trainDs) # use the CNN to pull feats and labels from trainDs
+	valFeats, valLabels = pull_feats_and_labels(valDs) # use the CNN to pull feats and labels from valDs
+	SVM = svm.SVC(kernel="rbf", C=1, gamma="auto") # instantiate an SVM (Super Voluptuous Model) with the radial basis function kernel
+	SVM.fit(trainFeats, trainLabels) # fit the SVM to the train feats and labels
+	preds = SVM.predict(valFeats) # predict the val feats
+	print("Accuracy:", accuracy_score(valLabels, preds))
+	print("Confusion matrix:\n", confusion_matrix(valLabels, preds))
+	print("Classification report:\n", classification_report(valLabels, preds))
+	dump(SVM, "model.joblib") # dump 'er to disk
 	model.save("model.keras") # stick a fork in her temporal lobe, connect it to a disk, and extract the model
 	artifact = wandb.Artifact("girl-classifier", type="model") # create an artifact object
 	artifact.add_file("model.keras") # add the model to the artifact
