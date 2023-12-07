@@ -149,7 +149,10 @@ config = {
 	"optimizer": "adam", # Jensen!
 	"metrics": ["accuracy"], # I'm gonna make you scream my na... "accuracy" ... yeah, that's what I meant ... "accuracy" ... definitely ...
 	"loss": "sparse_categorical_crossentropy", # kids, cross entropy is just a fancy way of saying the totally not fancy "negative logarithmic likelihood loss"
-	"epochs": 20 # started with 20 epochs, but I think I'll need more
+	"epochs": 20, # started with 20 epochs, but I think I'll need more,
+	"C": 0.8, # SVM regularization parameter
+	"gamma": "auto", # kernel coefficient for "rbf", "poly", and "sigmoid"
+	"kernel": "rbf" # kernel type
 }
 
 wandb.config.update(config)
@@ -180,7 +183,7 @@ if __name__ == "__main__":
 	)
 	trainFeats, trainLabels = pull_feats_and_labels(trainDs) # use the CNN to pull feats and labels from trainDs
 	valFeats, valLabels = pull_feats_and_labels(valDs) # use the CNN to pull feats and labels from valDs
-	SVM = svm.SVC(kernel="rbf", C=1, gamma="auto") # instantiate an SVM (Super Voluptuous Model) with the radial basis function kernel
+	SVM = svm.SVC(kernel = config["kernel"], C = config["C"], gamma = config["gamma"]) # instantiate an SVM (Super Voluptuous Model) with the radial basis function kernel
 	SVM.fit(trainFeats, trainLabels) # fit the SVM to the train feats and labels
 	preds = SVM.predict(valFeats) # predict the val feats
 	print("Accuracy:", accuracy_score(valLabels, preds))
