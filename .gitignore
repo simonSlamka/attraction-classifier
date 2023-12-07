@@ -9,3 +9,5 @@ out/
 *.jpeg
 *.txt
 *.dat
+.env
+*.log
