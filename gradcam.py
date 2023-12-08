@@ -79,7 +79,7 @@ def reshape_transform_vit_huggingface(x):
 
 faceGrabber = FaceGrabber()
 
-image = Image.open("Screenshot from 2023-12-04 15-09-43.png").convert("RGB")
+image = Image.open("Feature-Image-74.jpg").convert("RGB")
 face = faceGrabber.grab_faces(np.array(image))
 if face is not None:
     image = Image.fromarray(face)

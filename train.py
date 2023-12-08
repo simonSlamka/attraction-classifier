@@ -14,6 +14,11 @@ import dlib
 import gc
 from tqdm import tqdm
 from termcolor import colored
+import matplotlib.pyplot as plt
+import torch
+from torch.nn import CrossEntropyLoss
+
+
 
 # ^ TODO: TRY SWIN
 # ! TODO: REFACTOR TO MAKE MORE READABLE AND EASIER TO UNDERSTAND
@@ -74,6 +79,18 @@ mmod = dlib.cnn_face_detection_model_v1("mmod_human_face_detector.dat") # load f
 paddingBy = 0.1 # padding by 10%
 
 def grab_faces(inImg, outImg) -> bool:
+	"""
+	The function `grab_faces` takes an input image, detects faces using various cascades and models,
+	crops and saves the detected face if it belongs to the positive class, and returns True if a face is
+	successfully detected and saved.
+
+	@param inImg The input image file path. This is the image from which the faces will be detected and
+	cropped.
+	@param outImg The `outImg` parameter is the output directory where the cropped faces will be saved.
+
+	@return a boolean value. It returns True if a face is detected and successfully saved, and False
+	otherwise.
+	"""
 	img = cv2.imread(inImg) # read image
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert to grayscale
 
@@ -152,12 +169,13 @@ def grab_faces(inImg, outImg) -> bool:
 
 def resize_faces(inFace, outFace):
 	"""
-	The function `resize_faces` takes an input face image, resizes it to a specified size, and saves it
-	to an output directory.
+	The function `resize_faces` takes an input face image, resizes it to dimensions (224, 224), and
+	saves the resized image to the specified output directory.
 
-	:param inFace: The input face image file path. This is the image that you want to resize
-	:param outFace: The parameter "outFace" is the output directory where the resized face images will
-	be saved
+	@param inFace The parameter "inFace" is the path to the input image file containing the face that
+	needs to be resized.
+	@param outFace The parameter "outFace" is the output directory where the resized face image will be
+	saved.
 	"""
 	img = cv2.imread(inFace) # read image
 	path = os.path.basename(inFace) # get filename
@@ -173,10 +191,10 @@ def resize_faces(inFace, outFace):
 def central_crop(inImg, outImg):
 	"""
 	The function `central_crop` takes an input image, crops it to a central square region of size
-	400x400 pixels, and saves the cropped image to an output directory.
-
-	:param inImg: The input image file path. This is the image that you want to crop
-	:param outImg: The parameter "outImg" is the output directory where the cropped image will be saved
+	(224, 224), and saves the cropped image to an output directory.
+	
+	@param inImg The input image file path. This is the image that you want to crop.
+	@param outImg The parameter "outImg" is the output directory where the cropped image will be saved.
 	"""
 	img = cv2.imread(inImg) # read image
 	h, w, _ = img.shape # get image dims
@@ -201,10 +219,13 @@ def central_crop(inImg, outImg):
 def check_img_dims(dir): # sanity check to ensure all the imgs are of the dims (224, 224)
 	"""
 	The function `check_img_dims` checks if all the images in a given directory have dimensions of
-	400x400 pixels and returns a list of paths to images that do not meet this criteria.
+	(224, 224) and returns a list of paths to images that do not meet this criteria.
 
-	:param dir: The `dir` parameter is the directory path where the images are located
-	:return: a list of file paths for images that have dimensions other than (224, 224).
+	@param dir The "dir" parameter is the directory path where the images are located. The function will
+	iterate through all the files in the directory and its subdirectories, and check if the file is an
+	image file with extensions ".jpg", ".jpeg", or ".png". It will then load the image using Open
+
+	@return a list of file paths for images that have dimensions other than (224, 224).
 	"""
 	mismatched = []
 
@@ -283,6 +304,18 @@ faceDs = load_dataset("imagefolder", data_dir=f"{dsDir}/.faces", split="train")
 faceDs = faceDs.train_test_split(test_size=0.1, seed=69)
 ds = faceDs
 del faceDs
+
+samples = ds["train"].shuffle(seed=69).select(range(10))
+
+fig, axs = plt.subplots(1, len(samples))
+for i, sample in enumerate(samples):
+	axs[i].imshow(sample["image"])
+	axs[i].set_title(f"Image {i+1}")
+	axs[i].axis('off') # Hide axes for better visibility
+plt.subplots_adjust(wspace=0.05) # Reduce space between subplots for larger images
+plt.show()
+del samples
+
 gc.collect()
 
 imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k", size=224) # load img processor
@@ -291,10 +324,10 @@ def toPNG(image): # convert all jpgs to pngs
 	"""
 	The function `toPNG` converts an image to PNG format if it is not already in PNG format.
 
-	:param image: The parameter "image" is expected to be an instance of the Image class from the Python
-	Imaging Library (PIL)
-	:return: the image in PNG format. If the input image is already in PNG format, it will be returned
-	as is. If the input image is in a different format (e.g. JPEG), it will be converted to PNG format
+	@param image The parameter "image" is expected to be an instance of the PIL Image class.
+
+	@return the image in PNG format. If the input image is already in PNG format, it will be returned as
+	is. If the input image is in a different format (e.g. JPEG), it will be converted to PNG format
 	before being returned.
 	"""
 	if image.format != "PNG" and image.format != "png":
@@ -309,21 +342,14 @@ def transformToPNG(example):
 	format using the "toPNG" function, and updates the "image" key in the dictionary with the converted
 	image.
 
-	:param example: The parameter "example" is a dictionary that contains an "image" key. The value
-	associated with the "image" key is expected to be an image file
-	:return: the modified "example" dictionary.
+	@param example The parameter "example" is a dictionary that contains an "image" key. The value
+	associated with the "image" key is expected to be an image object or data that can be converted to a
+	PNG format.
+
+	@return the modified "example" dictionary.
 	"""
 	example["image"] = toPNG(example["image"])
 	return example
-
-# ds["train"] = ds["train"].map(transformToPNG, remove_columns=["image"])
-# ds["test"] = ds["test"].map(transformToPNG, remove_columns=["image"])
-
-# ds["train"]["image"] = [toPNG(image) for image in ds["train"]["image"]]
-# ds["test"]["image"] = [toPNG(image) for image in ds["test"]["image"]]
-
-# ds["train"] = ds["train"].map(lambda x: {"image": trainPaths[x["__index__"]]}, remove_columns=["image"])
-# ds["test"] = ds["test"].map(lambda x: {"image": testPaths[x["__index__"]]}, remove_columns=["image"])
 
 norm = Normalize(mean=imgProcessor.image_mean, std=imgProcessor.image_std)
 size = (
@@ -336,46 +362,59 @@ _transforms = Compose([RandomResizedCrop(size), ToTensor(), norm])
 
 def transform(example):
 	"""
-	The function takes an example dictionary, converts the images to RGB format, applies a
-	transformation to each image, and returns the modified example dictionary.
+	The function takes an example dictionary as input, converts the images in the dictionary to RGB
+	format, applies some transformations to the images, and returns the modified dictionary.
 
-	:param example: A dictionary containing the following keys:
-	:return: the modified "example" dictionary.
+	@param example The `example` parameter is a dictionary that contains information about an image. It
+	has a key "image" which represents the image data. The value of "image" is a list of PIL images.
+
+	@return the modified "example" dictionary.
 	"""
-	# image = PILImage.open(example["image"])
-	# image = image.convert("RGB")
-	# image = imgProcessor(image, return_tensors="pt")
-	# example["pixel_values"] = image.pixel_values[0]
-	# return example
 
 	example["pixel_values"] = [_transforms(img.convert("RGB")) for img in example["image"]]
 	del example["image"]
 	return example
-
-# ds["train"] = ds["train"].map(transform, batched=True)
-# ds["test"] = ds["test"].map(transform, batched=True)
 
 ds = ds.with_transform(transform)
 
 accuracy = evaluate.load("accuracy")
 
 def collator(x):
+	"""
+	The function `collator` takes an input `x` and returns a dictionary with some default data
+	collation, with an option to enable interpolation of positional encoding.
+
+	@param x The parameter `x` is the input data that you want to collate. It is used as an argument for
+	the `default_data_collator` function, which is a function that collates the input data into a
+	dictionary format. The resulting dictionary is then returned by the `collator` function
+
+	@return a dictionary.
+	"""
 	dict = default_data_collator(x)
 	# dict["interpolate_pos_encoding"] = True # TODO: enable when using input dims > (224, 224)
 	return dict
 
 def compute_metrics(evalPred):
 	"""
-	The function `compute_metrics` takes in a tuple `evalPred` containing predicted values and labels,
-	and returns the accuracy of the predictions.
+	The function "compute_metrics" computes the loss between predicted logits and true labels using the
+	CrossEntropyLoss function in PyTorch, and also computes the accuracy of the predictions.
 
-	:param evalPred: The evalPred parameter is a tuple containing two elements: preds and labels
-	:return: the result of the accuracy computation.
+	@param evalPred The evalPred parameter is a tuple containing two elements: logits and labels. Logits
+	are the predicted values generated by a model, typically before applying a softmax function. Labels
+	are the ground truth values or target values for the corresponding inputs.
+
+	@return a dictionary with two key-value pairs. The first key is "loss" and the value is the loss item,
+	which is the loss value converted to a Python float. The second key is "accuracy" and the value is the
+	accuracy of the predictions.
 	"""
-	preds, labels = evalPred
-	preds = np.argmax(preds, axis=1)
-
-	return accuracy.compute(predictions=preds, references=labels)
+	logits, labels = evalPred
+	logits = torch.tensor(logits)
+	labels = torch.tensor(labels)
+	lossFunc = CrossEntropyLoss()
+	loss = lossFunc(logits, labels)
+	preds = np.argmax(logits, axis=1)
+	acc = accuracy.compute(predictions=preds, references=labels)
+	return {"loss": loss.item(), "accuracy": acc["accuracy"]}
 
 config = AutoConfig.from_pretrained("google/vit-base-patch16-224-in21k", num_labels=len(labels), id2label=id2label, label2id=label2id) #, dropout_rate=0.5) # load config
 model = AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k", config=config) # load base model
@@ -389,19 +428,20 @@ trainingArgs = TrainingArguments(
 	learning_rate=5e-5,
 	per_device_train_batch_size=16,
 	per_device_eval_batch_size=16,
-	gradient_accumulation_steps=4,
+	#gradient_accumulation_steps=8, # defaults to 1
 	weight_decay=0.01,
 	num_train_epochs=15,
-	warmup_ratio=0.1,
+	warmup_ratio=0.05,
 	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear", "polynomial"
 	seed=69,
-	save_steps=15,
-	eval_steps=15,
+	save_steps=100,
+	eval_steps=100,
 	save_safetensors=True,
 	save_total_limit=5,
-	logging_steps=1,
+	logging_steps=10,
 	load_best_model_at_end=True,
-	metric_for_best_model="accuracy",
+	metric_for_best_model="loss",
+	greater_is_better=False,
 	report_to=["wandb", "tensorboard"],
 	push_to_hub=True,
 	hub_model_id="attraction-classifier"
