@@ -26,6 +26,8 @@ class AttractionClassifier:
             startX = thirdW - 40
             endX = startX + thirdW + 700
             image = image.crop((startX, startY, endX, endY))
+            image.show()
+            breakpoint()
         face = self.faceGrabber.grab_faces(np.array(image))
         if face is None:
             logging.warning("No face detected")
@@ -33,7 +35,7 @@ class AttractionClassifier:
         face = Image.fromarray(face)
         result = self.pipe(face)
         face.show()
-        return result
+        return result, face
 
 
 if __name__ == "__main__":

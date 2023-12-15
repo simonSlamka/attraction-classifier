@@ -96,6 +96,30 @@ def grab_faces(inImg, outImg) -> bool:
 
 	detected = None
 
+	# rotAngles = [0, 90, 180, 270]
+
+	# for angle in rotAngles:
+	# 	if angle == 0:
+	# 		rotatedImg = img
+	# 		rotatedGray = gray
+	# 	else:
+	# 		pilImg = PILImage.fromarray(img)
+	# 		rotatedPilImg = pilImg.rotate(angle)
+	# 		rotatedImg = np.array(rotatedPilImg)
+	# 		rotatedGray = cv2.cvtColor(rotatedImg, cv2.COLOR_BGR2GRAY)
+
+	if detected is None:
+		faces = detector(gray) #rotatedGray) # detect faces
+		if len(faces) > 0:
+			detected = faces[0]
+			detected = (detected.left(), detected.top(), detected.width(), detected.height())
+
+	if detected is None:
+		faces = mmod(img) #rotatedImg)
+		if len(faces) > 0:
+			detected = faces[0]
+			detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
+
 	for cascade in cascades:
 		cascadeClassifier = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
 		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=6) # detect faces
@@ -103,17 +127,8 @@ def grab_faces(inImg, outImg) -> bool:
 			detected = faces[0]
 			break
 
-	if detected is None:
-		faces = detector(gray) # detect faces
-		if len(faces) > 0:
-			detected = faces[0]
-			detected = (detected.left(), detected.top(), detected.width(), detected.height())
-
-	if detected is None:
-		faces = mmod(img)
-		if len(faces) > 0:
-			detected = faces[0]
-			detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
+			# if detected is not None:
+			# 	break
 
 	if "pos" in inImg and detected is not None: # if positive class and face detected
 		x, y, w, h = detected # grab first face
@@ -305,17 +320,6 @@ faceDs = faceDs.train_test_split(test_size=0.1, seed=69)
 ds = faceDs
 del faceDs
 
-samples = ds["train"].shuffle(seed=69).select(range(10))
-
-fig, axs = plt.subplots(1, len(samples))
-for i, sample in enumerate(samples):
-	axs[i].imshow(sample["image"])
-	axs[i].set_title(f"Image {i+1}")
-	axs[i].axis('off') # Hide axes for better visibility
-plt.subplots_adjust(wspace=0.05) # Reduce space between subplots for larger images
-plt.show()
-del samples
-
 gc.collect()
 
 imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k", size=224) # load img processor
@@ -438,7 +442,7 @@ trainingArgs = TrainingArguments(
 	eval_steps=100,
 	save_safetensors=True,
 	save_total_limit=5,
-	logging_steps=10,
+	logging_steps=13,
 	load_best_model_at_end=True,
 	metric_for_best_model="loss",
 	greater_is_better=False,
@@ -448,7 +452,7 @@ trainingArgs = TrainingArguments(
 )
 
 earlyPullOut = EarlyStoppingCallback(
-	early_stopping_patience=10,
+	early_stopping_patience=3,
 	#early_stopping_threshold=0.01 # disabled for now
 )
 
