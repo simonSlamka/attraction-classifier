@@ -34,7 +34,7 @@ class AttractionClassifier:
             return None
         face = Image.fromarray(face)
         result = self.pipe(face)
-        face.show()
+        # face.show()
         return result, face
 
 

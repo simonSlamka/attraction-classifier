@@ -41,13 +41,14 @@ class FaceGrabber:
                 detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
                 logging.info("Face detected by mmod")
 
-        for cascade in self.cascades:
-            cascadeClassifier = cv.CascadeClassifier(cv.data.haarcascades + cascade)
-            faces = cascadeClassifier.detectMultiScale(img, scaleFactor=1.5, minNeighbors=5) # detect faces
-            if len(faces) > 0:
-                detected = faces[0]
-                logging.info(f"Face detected by {cascade}")
-                break
+        if detected is None:
+            for cascade in self.cascades:
+                cascadeClassifier = cv.CascadeClassifier(cv.data.haarcascades + cascade)
+                faces = cascadeClassifier.detectMultiScale(img, scaleFactor=1.5, minNeighbors=5) # detect faces
+                if len(faces) > 0:
+                    detected = faces[0]
+                    logging.info(f"Face detected by {cascade}")
+                    break
 
         if detected is not None: # if face detected
             x, y, w, h = detected # grab first face
