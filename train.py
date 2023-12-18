@@ -20,7 +20,6 @@ from torch.nn import CrossEntropyLoss
 
 
 
-# ^ TODO: TRY SWIN
 # ! TODO: REFACTOR TO MAKE MORE READABLE AND EASIER TO UNDERSTAND
 
 logging.basicConfig(level=logging.WARNING)
@@ -28,6 +27,8 @@ logging.basicConfig(level=logging.WARNING)
 wandb.init(project="girl-classifier", entity="simtoonia")
 
 dsDir = "/home/simtoon/smtn_girls_likeOrNot" # dataset dir
+
+baseMdl = "microsoft/swin-tiny-patch4-window7-224"
 
 for subdir in ["pos", "neg"]:
 	subdirPath = os.path.join(dsDir, subdir)
@@ -323,7 +324,7 @@ del faceDs
 
 gc.collect()
 
-imgProcessor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k", size=224) # load img processor
+imgProcessor = AutoImageProcessor.from_pretrained(baseMdl, size=224) # load img processor
 
 def toPNG(image): # convert all jpgs to pngs
 	"""
@@ -428,8 +429,8 @@ def compute_metrics(evalPred):
 	acc = accuracy.compute(predictions=preds, references=labels)
 	return {"loss": loss.item(), "accuracy": acc["accuracy"]}
 
-config = AutoConfig.from_pretrained("google/vit-base-patch16-224-in21k", num_labels=len(labels), id2label=id2label, label2id=label2id, dropout_rate=0.5) # load config
-model = AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k", config=config) # load base model
+config = AutoConfig.from_pretrained(baseMdl, num_labels=len(labels), id2label=id2label, label2id=label2id, dropout_rate=0.5) # load config
+model = AutoModelForImageClassification.from_pretrained(baseMdl, config=config, ignore_mismatched_sizes=True) # load base model
 
 trainingArgs = TrainingArguments(
 	output_dir="./out",
@@ -456,7 +457,7 @@ trainingArgs = TrainingArguments(
 	greater_is_better=False,
 	report_to=["wandb", "tensorboard"],
 	push_to_hub=True,
-	hub_model_id="attraction-classifier"
+	hub_model_id=f"attraction-classifier-{baseMdl.split('/')[-1]}"
 )
 
 earlyPullOut = EarlyStoppingCallback(
