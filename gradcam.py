@@ -67,12 +67,13 @@ class GradCam():
             return np.hstack(results)
         
         
-    def print_top_categories(self, model, img_tensor, top_k=5):
+    def get_top_category(self, model, img_tensor, top_k=5):
         logits = model(img_tensor.unsqueeze(0)).logits
         probabilities = torch.nn.functional.softmax(logits, dim=1)
-        indices = logits.cpu()[0, :].detach().numpy().argsort()[-top_k :][::-1]
-        for i in indices:
-            print(f"Predicted class (sorted from most confident) {i}: {model.config.id2label[i]}, confidence: {probabilities[0][i].item()}")
+        topIdx = logits.cpu()[0, :].detach().numpy().argsort()[-1]
+        topClass = model.config.id2label[topIdx]
+        topScore = probabilities[0][topIdx].item()
+        return [{"label": topClass, "score": topScore}]
 
     def reshape_transform_vit_huggingface(self, x):
         activations = x[:, 1:, :]
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     faceGrabber = FaceGrabber()
     gradCam = GradCam()
 
-    image = Image.open("Screenshot from 2023-12-17 09-06-04.png").convert("RGB")
+    image = Image.open("Screenshot from 2023-12-18 02-11-31.png").convert("RGB")
     face = faceGrabber.grab_faces(np.array(image))
     if face is not None:
         image = Image.fromarray(face)
@@ -96,8 +97,8 @@ if __name__ == "__main__":
     img_tensor = transforms.ToTensor()(image)
 
     model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
-    targets_for_gradcam = [ClassifierOutputTarget(gradCam.category_name_to_index(model, "pos")),
-                        ClassifierOutputTarget(gradCam.category_name_to_index(model, "neg"))]
+    # targets_for_gradcam = [ClassifierOutputTarget(gradCam.category_name_to_index(model, "pos")),
+    #                     ClassifierOutputTarget(gradCam.category_name_to_index(model, "neg"))]
     target_layer_dff = model.vit.layernorm
     target_layer_gradcam = model.vit.encoder.layer[-2].output
     image_resized = image.resize((224, 224))
@@ -118,9 +119,13 @@ if __name__ == "__main__":
     cv.resizeWindow("DFF Image", 2500, 700)
     # cv.waitKey(0)
     # cv.destroyAllWindows()
+    res = gradCam.get_top_category(model, tensor_resized)
+    cls = res[0]["label"]
+    clsIdx = gradCam.category_name_to_index(model, cls)
+    clsTarget = ClassifierOutputTarget(clsIdx)
     grad_cam_image = gradCam.run_grad_cam_on_image(model=model,
                                         target_layer=target_layer_gradcam,
-                                        targets_for_gradcam=targets_for_gradcam,
+                                        targets_for_gradcam=[clsTarget],
                                         input_tensor=tensor_resized,
                                         input_image=image_resized,
                                         reshape_transform=gradCam.reshape_transform_vit_huggingface,
@@ -130,4 +135,4 @@ if __name__ == "__main__":
     cv.resizeWindow("Grad-CAM Image", 2000, 1250)
     cv.waitKey(0)
     cv.destroyAllWindows()
-    gradCam.print_top_categories(model, tensor_resized)
+    print(f"Top category: {gradCam.get_top_category(model, tensor_resized)[0]}")

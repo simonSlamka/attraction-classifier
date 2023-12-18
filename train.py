@@ -120,12 +120,13 @@ def grab_faces(inImg, outImg) -> bool:
 			detected = faces[0]
 			detected = (detected.rect.left(), detected.rect.top(), detected.rect.width(), detected.rect.height())
 
-	for cascade in cascades:
-		cascadeClassifier = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
-		faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=6) # detect faces
-		if len(faces) > 0:
-			detected = faces[0]
-			break
+	if detected is None:
+		for cascade in cascades:
+			cascadeClassifier = cv2.CascadeClassifier(cv2.data.haarcascades + cascade)
+			faces = cascadeClassifier.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=6) # detect faces
+			if len(faces) > 0:
+				detected = faces[0]
+				break
 
 			# if detected is not None:
 			# 	break

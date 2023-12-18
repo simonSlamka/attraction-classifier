@@ -18,8 +18,6 @@ logging.basicConfig(level=logging.INFO)
 model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
 processor = ViTImageProcessor.from_pretrained("ongkn/attraction-classifier")
 
-pipe = pipeline("image-classification", model=model, feature_extractor=processor)
-
 faceGrabber = FaceGrabber()
 gradCam = GradCam()
 
@@ -44,20 +42,22 @@ def classify_image(input):
                                 n_components=5,
                                 top_k=10
                                 )
+    result = gradCam.get_top_category(model, tensorResized)
+    cls = result[0]["label"]
+    clsIdx = gradCam.category_name_to_index(model, cls)
+    clsTarget = ClassifierOutputTarget(clsIdx)
     gradCamImage = gradCam.run_grad_cam_on_image(model=model,
                                         target_layer=targetLayerGradCam,
-                                        targets_for_gradcam=targetsForGradCam,
+                                        targets_for_gradcam=[clsTarget],
                                         input_tensor=tensorResized,
                                         input_image=faceResized,
                                         reshape_transform=gradCam.reshape_transform_vit_huggingface)
-    result = pipe(faceResized)
     if result[0]["label"] == "pos" and result[0]["score"] > 0.9 and result[0]["score"] < 0.95:
         return result[0]["label"], result[0]["score"], str("Nice!"), face, dffImage, gradCamImage
     elif result[0]["label"] == "pos" and result[0]["score"] > 0.95:
         return result[0]["label"], result[0]["score"], str("WHOA!!!!"), face, dffImage, gradCamImage
     else:
         return result[0]["label"], result[0]["score"], "Indifferent", face, dffImage, gradCamImage
-
 
 iface = gr.Interface(
     fn=classify_image,
