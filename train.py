@@ -382,6 +382,13 @@ def transform(example):
 
 ds = ds.with_transform(transform)
 
+def augment(example):
+	example["pixel_values"] = [torch.flip(img, [2]) for img in example["pixel_values"]]
+	# example["pixel_values"] = [torch.rot90(img, 1, [2, 3]) for img in example["pixel_values"]]
+	return example
+
+# ds = ds.map(augment, num_proc=16)
+
 accuracy = evaluate.load("accuracy")
 
 def collator(x):
@@ -421,7 +428,7 @@ def compute_metrics(evalPred):
 	acc = accuracy.compute(predictions=preds, references=labels)
 	return {"loss": loss.item(), "accuracy": acc["accuracy"]}
 
-config = AutoConfig.from_pretrained("google/vit-base-patch16-224-in21k", num_labels=len(labels), id2label=id2label, label2id=label2id) #, dropout_rate=0.5) # load config
+config = AutoConfig.from_pretrained("google/vit-base-patch16-224-in21k", num_labels=len(labels), id2label=id2label, label2id=label2id, dropout_rate=0.5) # load config
 model = AutoModelForImageClassification.from_pretrained("google/vit-base-patch16-224-in21k", config=config) # load base model
 
 trainingArgs = TrainingArguments(
@@ -434,7 +441,7 @@ trainingArgs = TrainingArguments(
 	per_device_train_batch_size=16,
 	per_device_eval_batch_size=16,
 	#gradient_accumulation_steps=8, # defaults to 1
-	weight_decay=0.01,
+	weight_decay=0.015,
 	num_train_epochs=10,
 	warmup_ratio=0.05,
 	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear", "polynomial"
@@ -443,7 +450,7 @@ trainingArgs = TrainingArguments(
 	eval_steps=100,
 	save_safetensors=True,
 	save_total_limit=5,
-	logging_steps=13,
+	logging_steps=15,
 	load_best_model_at_end=True,
 	metric_for_best_model="loss",
 	greater_is_better=False,
