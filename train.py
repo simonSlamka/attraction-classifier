@@ -382,6 +382,8 @@ def transform(example):
 
 ds = ds.with_transform(transform)
 
+ds.push_to_hub("ongkn/attraction-faces-ds", private=True)
+
 def augment(example):
 	example["pixel_values"] = [torch.flip(img, [2]) for img in example["pixel_values"]]
 	# example["pixel_values"] = [torch.rot90(img, 1, [2, 3]) for img in example["pixel_values"]]
