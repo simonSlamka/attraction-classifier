@@ -6,6 +6,8 @@ import evaluate
 import numpy as np
 import wandb
 import os
+import hashlib
+import imagehash
 from torchvision.transforms import Normalize, ToTensor, Compose, RandomResizedCrop
 import io
 import cv2
@@ -20,7 +22,6 @@ from torch.nn import CrossEntropyLoss
 
 
 
-# ^ TODO: TRY SWIN
 # ! TODO: REFACTOR TO MAKE MORE READABLE AND EASIER TO UNDERSTAND
 
 logging.basicConfig(level=logging.WARNING)
@@ -53,9 +54,58 @@ ds = ds.train_test_split(test_size=0.1, seed=69) # split 'em
 
 print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
 
-# TODO: dedupe images through cosim
+def get_img_hash(path):
+	with open(path, "rb") as f:
+		return hashlib.md5(f.read()).hexdigest()
 
-# ! after successful face detection and cropping across the board, create a dataset exclusively for faces
+def get_dupes_by_hash(dsDir):
+	hashes = {}
+	dupes = []
+	for root, dirs, files in os.walk(dsDir):
+		for file in files:
+			if file.endswith((".jpg", ".jpeg", ".png")):
+				path = os.path.join(root, file)
+				hash = get_img_hash(path)
+				if hash not in hashes:
+					hashes[hash] = path
+				else:
+					dupes.append((path, hashes[hash]))
+	return dupes
+
+def get_img_perceptual_hash(path):
+	img = PILImage.open(path)
+	return imagehash.phash(img, hash_size=16)
+
+def get_dupes_by_perceptual_hash(dsDir):
+	hashes = {}
+	dupes = []
+	for root, dirs, files in os.walk(dsDir):
+		for file in files:
+			if file.endswith((".jpg", ".jpeg", ".png")):
+				path = os.path.join(root, file)
+				hash = get_img_perceptual_hash(path)
+				if hash not in hashes:
+					hashes[hash] = path
+				else:
+					dupes.append((path, hashes[hash]))
+	return dupes
+
+for subdir in ["pos", "neg"]:
+	subdirPath = os.path.join(dsDir, subdir)
+	dupes = get_dupes_by_hash(subdirPath)
+	dupes.extend(get_dupes_by_perceptual_hash(subdirPath))
+	if len(dupes) > 0:
+		dupes = list(set(dupes)) # dedupe dupes LOL
+		print(colored(f"Found {len(dupes)} duplicate images in {subdirPath}", "red"))
+		for dupe in dupes:
+			print(dupe)
+		if input("Remove dupes (permanently)? (yes/no): ").lower() == "yes":
+			for dupe in dupes:
+				if os.path.exists(dupe[0]):
+					os.remove(dupe[0])
+					print(f"Removed {dupe[0]}")
+			print(colored(f"Removed {len(dupes)} duplicate images in {subdirPath}", "green"))
+			del dupes
 
 # ds["train"][randrange(0, 2001)]["image"].show() # display a specimen
 print(f"{ds['train'].features}")
@@ -446,7 +496,7 @@ trainingArgs = TrainingArguments(
 	weight_decay=0.015,
 	num_train_epochs=10,
 	warmup_ratio=0.05,
-	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear", "polynomial"
+	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear"
 	seed=69,
 	save_steps=100,
 	eval_steps=100,

@@ -135,4 +135,4 @@ if __name__ == "__main__":
     cv.resizeWindow("Grad-CAM Image", 2000, 1250)
     cv.waitKey(0)
     cv.destroyAllWindows()
-    print(f"Top category: {gradCam.get_top_category(model, tensor_resized)[0]}")
+    print(f"Top class: {gradCam.get_top_category(model, tensor_resized)[0]}")
