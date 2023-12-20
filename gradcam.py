@@ -89,7 +89,7 @@ if __name__ == "__main__":
     faceGrabber = FaceGrabber()
     gradCam = GradCam()
 
-    image = Image.open("Screenshot from 2023-12-18 02-11-31.png").convert("RGB")
+    image = Image.open("Screenshot from 2023-12-04 15-09-43.png").convert("RGB")
     face = faceGrabber.grab_faces(np.array(image))
     if face is not None:
         image = Image.fromarray(face)
