@@ -12,6 +12,7 @@ import torch
 from typing import List, Callable, Optional
 import logging
 from face_grab import FaceGrabber
+from tqdm import tqdm
 
 # original borrowed from https://github.com/jacobgil/pytorch-grad-cam/blob/master/tutorials/HuggingFace.ipynb
 # thanks @jacobgil
@@ -82,28 +83,21 @@ class GradCam():
         activations = activations.transpose(2, 3).transpose(1, 2)
         return activations
 
-
-
-if __name__ == "__main__":
-
-    faceGrabber = FaceGrabber()
-    gradCam = GradCam()
-
-    image = Image.open("Screenshot from 2023-12-04 15-09-43.png").convert("RGB")
-    face = faceGrabber.grab_faces(np.array(image))
+def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTForImageClassification, target_layer_dff, target_layer_gradcam):
+    frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+    orig = frame.copy()
+    face = faceGrabber.grab_faces(frame)
+    # image = Image.open("Screenshot from 2023-12-04 15-09-43.png").convert("RGB")
+    # face = faceGrabber.grab_faces(np.array(image))
+    # if face is not None:
+    #     image = Image.fromarray(face)
     if face is not None:
-        image = Image.fromarray(face)
-
-    img_tensor = transforms.ToTensor()(image)
-
-    model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
-    # targets_for_gradcam = [ClassifierOutputTarget(gradCam.category_name_to_index(model, "pos")),
-    #                     ClassifierOutputTarget(gradCam.category_name_to_index(model, "neg"))]
-    target_layer_dff = model.vit.layernorm
-    target_layer_gradcam = model.vit.encoder.layer[-2].output
-    image_resized = image.resize((224, 224))
+        frame = Image.fromarray(face)
+    else:
+        return orig, orig
+    img_tensor = transforms.ToTensor()(frame)
+    image_resized = frame.resize((224, 224))
     tensor_resized = transforms.ToTensor()(image_resized)
-
     dff_image = run_dff_on_image(model=model,
                                 target_layer=target_layer_dff,
                                 classifier=model.classifier,
@@ -114,13 +108,9 @@ if __name__ == "__main__":
                                 top_k=10,
                                 threshold=0,
                                 output_size=None) #(500, 500))
-    cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
-    cv.imshow("DFF Image", cv.cvtColor(dff_image, cv.COLOR_BGR2RGB))
-    cv.resizeWindow("DFF Image", 2500, 700)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
     res = gradCam.get_top_category(model, tensor_resized)
     cls = res[0]["label"]
+    score = res[0]["score"]
     clsIdx = gradCam.category_name_to_index(model, cls)
     clsTarget = ClassifierOutputTarget(clsIdx)
     grad_cam_image = gradCam.run_grad_cam_on_image(model=model,
@@ -130,9 +120,93 @@ if __name__ == "__main__":
                                         input_image=image_resized,
                                         reshape_transform=gradCam.reshape_transform_vit_huggingface,
                                         threshold=0)
-    cv.namedWindow("Grad-CAM Image", cv.WINDOW_KEEPRATIO)
-    cv.imshow("Grad-CAM Image", grad_cam_image)
-    cv.resizeWindow("Grad-CAM Image", 2000, 1250)
-    cv.waitKey(0)
+
+    dff_image = cv.resize(dff_image, (2500, 700))
+    dff_image = cv.cvtColor(dff_image, cv.COLOR_BGR2RGB)
+
+    cv.putText(dff_image, f"Class: {cls} | Score: {score:.4f}", (10, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv.LINE_AA)
+
+    return dff_image, grad_cam_image
+
+
+if __name__ == "__main__":
+
+    faceGrabber = FaceGrabber()
+    gradCam = GradCam()
+    model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
+    target_layer_dff = model.vit.layernorm
+    target_layer_gradcam = model.vit.encoder.layer[-2].output
+
+    cap = cv.VideoCapture("emi.mp4")
+    w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+    h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+    size = (w, h)
+    framerate = cap.get(cv.CAP_PROP_FPS)
+    totalFrames = cap.get(cv.CAP_PROP_FRAME_COUNT)
+
+    writer = cv.VideoWriter("emi_out.mp4", cv.VideoWriter_fourcc(*"mp4v"), framerate, (2500, 700))
+
+    for _ in tqdm(range(int(totalFrames)), desc="Processing frames"):
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        processed = process_frame(frame, faceGrabber, gradCam, model, target_layer_dff, target_layer_gradcam)
+
+        cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
+        cv.imshow("DFF Image", processed[0])
+        cv.resizeWindow("DFF Image", 2500, 700)
+        cv.waitKey(1)
+        writer.write(processed[0])
+
+    cap.release()
+    writer.release()
     cv.destroyAllWindows()
-    print(f"Top class: {gradCam.get_top_category(model, tensor_resized)[0]}")
+
+    # image = Image.open("Screenshot from 2023-12-04 15-09-43.png").convert("RGB")
+    # face = faceGrabber.grab_faces(np.array(image))
+    # if face is not None:
+    #     image = Image.fromarray(face)
+
+    # img_tensor = transforms.ToTensor()(image)
+
+    # model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
+    # # targets_for_gradcam = [ClassifierOutputTarget(gradCam.category_name_to_index(model, "pos")),
+    # #                     ClassifierOutputTarget(gradCam.category_name_to_index(model, "neg"))]
+    # target_layer_dff = model.vit.layernorm
+    # target_layer_gradcam = model.vit.encoder.layer[-2].output
+    # image_resized = image.resize((224, 224))
+    # tensor_resized = transforms.ToTensor()(image_resized)
+
+    # dff_image = run_dff_on_image(model=model,
+    #                             target_layer=target_layer_dff,
+    #                             classifier=model.classifier,
+    #                             img_pil=image_resized,
+    #                             img_tensor=tensor_resized,
+    #                             reshape_transform=gradCam.reshape_transform_vit_huggingface,
+    #                             n_components=5,
+    #                             top_k=10,
+    #                             threshold=0,
+    #                             output_size=None) #(500, 500))
+    # cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
+    # cv.imshow("DFF Image", cv.cvtColor(dff_image, cv.COLOR_BGR2RGB))
+    # cv.resizeWindow("DFF Image", 2500, 700)
+    # # cv.waitKey(0)
+    # # cv.destroyAllWindows()
+    # res = gradCam.get_top_category(model, tensor_resized)
+    # cls = res[0]["label"]
+    # clsIdx = gradCam.category_name_to_index(model, cls)
+    # clsTarget = ClassifierOutputTarget(clsIdx)
+    # grad_cam_image = gradCam.run_grad_cam_on_image(model=model,
+    #                                     target_layer=target_layer_gradcam,
+    #                                     targets_for_gradcam=[clsTarget],
+    #                                     input_tensor=tensor_resized,
+    #                                     input_image=image_resized,
+    #                                     reshape_transform=gradCam.reshape_transform_vit_huggingface,
+    #                                     threshold=0)
+    # cv.namedWindow("Grad-CAM Image", cv.WINDOW_KEEPRATIO)
+    # cv.imshow("Grad-CAM Image", grad_cam_image)
+    # cv.resizeWindow("Grad-CAM Image", 2000, 1250)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+    # print(f"Top class: {gradCam.get_top_category(model, tensor_resized)[0]}")

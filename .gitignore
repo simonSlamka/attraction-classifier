@@ -8,6 +8,7 @@ out/
 *.jpg
 *.png
 *.jpeg
+*.mp4
 *.txt
 *.dat
 .env
