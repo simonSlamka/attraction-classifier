@@ -104,8 +104,8 @@ def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTF
                                 img_pil=image_resized,
                                 img_tensor=tensor_resized,
                                 reshape_transform=gradCam.reshape_transform_vit_huggingface,
-                                n_components=5,
-                                top_k=10,
+                                n_components=6,
+                                top_k=15,
                                 threshold=0,
                                 output_size=None) #(500, 500))
     res = gradCam.get_top_category(model, tensor_resized)
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     target_layer_dff = model.vit.layernorm
     target_layer_gradcam = model.vit.encoder.layer[-2].output
 
-    cap = cv.VideoCapture("simone.mov")
+    cap = cv.VideoCapture("emi.mp4")
     w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
     h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
     size = (w, h)
@@ -183,8 +183,8 @@ if __name__ == "__main__":
     #                             img_pil=image_resized,
     #                             img_tensor=tensor_resized,
     #                             reshape_transform=gradCam.reshape_transform_vit_huggingface,
-    #                             n_components=5,
-    #                             top_k=10,
+    #                             n_components=6,
+    #                             top_k=15,
     #                             threshold=0,
     #                             output_size=None) #(500, 500))
     # cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
