@@ -50,7 +50,6 @@ for subdir in ["pos", "neg"]:
 
 ds = load_dataset("imagefolder", data_dir=dsDir, split="train") #.cast_column("image", Image(decode=False))
 ds = ds.train_test_split(test_size=0.1, seed=69) # split 'em
-# ds.push_to_hub("ongkn/women", private=True)
 
 print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
 
@@ -493,7 +492,7 @@ trainingArgs = TrainingArguments(
 	per_device_train_batch_size=16,
 	per_device_eval_batch_size=16,
 	#gradient_accumulation_steps=8, # defaults to 1
-	weight_decay=0.02,
+	weight_decay=0.01,
 	num_train_epochs=10,
 	warmup_ratio=0.1,
 	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear"
@@ -502,7 +501,7 @@ trainingArgs = TrainingArguments(
 	eval_steps=150,
 	save_safetensors=True,
 	save_total_limit=3,
-	logging_steps=15,
+	logging_steps=20,
 	load_best_model_at_end=True,
 	metric_for_best_model="loss",
 	greater_is_better=False,
