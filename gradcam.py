@@ -130,14 +130,13 @@ def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTF
 
 
 if __name__ == "__main__":
-
     faceGrabber = FaceGrabber()
     gradCam = GradCam()
     model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
     target_layer_dff = model.vit.layernorm
     target_layer_gradcam = model.vit.encoder.layer[-2].output
 
-    cap = cv.VideoCapture("emi.mp4")
+    cap = cv.VideoCapture("simone.mov")
     w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
     h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
     size = (w, h)
