@@ -9,10 +9,14 @@ from PIL import Image
 import numpy as np
 import cv2 as cv
 import torch
-from typing import List, Callable, Optional
+from typing import List, Callable, Optional, Tuple
 import logging
 from face_grab import FaceGrabber
 from tqdm import tqdm
+import logging
+import os
+
+logging.basicConfig(level=logging.INFO)
 
 # original borrowed from https://github.com/jacobgil/pytorch-grad-cam/blob/master/tutorials/HuggingFace.ipynb
 # thanks @jacobgil
@@ -83,7 +87,7 @@ class GradCam():
         activations = activations.transpose(2, 3).transpose(1, 2)
         return activations
 
-def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTForImageClassification, target_layer_dff, target_layer_gradcam):
+def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTForImageClassification, target_layer_dff, target_layer_gradcam, outputDims: Tuple[int, int] = (800, 300)):
     frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     orig = frame.copy()
     face = faceGrabber.grab_faces(frame)
@@ -94,7 +98,7 @@ def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTF
     if face is not None:
         frame = Image.fromarray(face)
     else:
-        return orig, orig
+        return [orig]
     img_tensor = transforms.ToTensor()(frame)
     image_resized = frame.resize((224, 224))
     tensor_resized = transforms.ToTensor()(image_resized)
@@ -121,12 +125,12 @@ def process_frame(frame, faceGrabber: FaceGrabber, gradCam: GradCam, model: ViTF
                                         reshape_transform=gradCam.reshape_transform_vit_huggingface,
                                         threshold=0)
 
-    dff_image = cv.resize(dff_image, (2500, 700))
+    dff_image = cv.resize(dff_image, outputDims)
     dff_image = cv.cvtColor(dff_image, cv.COLOR_BGR2RGB)
 
     cv.putText(dff_image, f"Class: {cls} | Score: {score:.4f}", (10, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv.LINE_AA)
 
-    return dff_image, grad_cam_image
+    return [dff_image, grad_cam_image, cls, score]
 
 
 if __name__ == "__main__":
@@ -136,27 +140,58 @@ if __name__ == "__main__":
     target_layer_dff = model.vit.layernorm
     target_layer_gradcam = model.vit.encoder.layer[-2].output
 
-    cap = cv.VideoCapture("emi.mp4")
+    cap = cv.VideoCapture("iggirl.mp4", cv.CAP_FFMPEG)
     w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
     h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
     size = (w, h)
     framerate = cap.get(cv.CAP_PROP_FPS)
     totalFrames = cap.get(cv.CAP_PROP_FRAME_COUNT)
+    # cap.set(cv.CAP_PROP_POS_FRAMES, framerate * 111)
+    # totalFrames -= (framerate * 111) - (framerate * 30) # ! skip first 111 seconds and crop last 30 seconds
 
-    writer = cv.VideoWriter("emi_out.mp4", cv.VideoWriter_fourcc(*"mp4v"), framerate, (2500, 700))
+    dims = (800, 300)
+    writer = cv.VideoWriter("iggirl_out.mp4", cv.VideoWriter_fourcc(*"mp4v"), framerate, dims)
 
-    for _ in tqdm(range(int(totalFrames)), desc="Processing frames"):
-        ret, frame = cap.read()
-        if not ret:
-            break
+    scores = []
 
-        processed = process_frame(frame, faceGrabber, gradCam, model, target_layer_dff, target_layer_gradcam)
+    try:
+        with open("scores.txt", "w") as f:
+            for _ in tqdm(range(int(totalFrames)), desc="Processing frames"):
+                ret, frame = cap.read()
+                if not ret:
+                    break
 
-        cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
-        cv.imshow("DFF Image", processed[0])
-        cv.resizeWindow("DFF Image", 2500, 700)
-        cv.waitKey(1)
-        writer.write(processed[0])
+                processed = process_frame(frame, faceGrabber, gradCam, model, target_layer_dff, target_layer_gradcam, outputDims=dims)
+
+                if len(processed) == 1:
+                    writer.write(processed[0])
+                    continue
+                else:
+                    dff_image = processed[0]
+                    grad_cam_image = processed[1]
+                    cls = processed[2]
+                    if cls == "pos":
+                        score = processed[3]
+                    else:
+                        score = processed[3] * -1
+                    logging.debug(f"Class: {cls} | Score: {score:.4f}")
+                    scores.append(score)
+                    f.write(f"{score}\n")
+                    cv.namedWindow("DFF Image", cv.WINDOW_KEEPRATIO)
+                    cv.imshow("DFF Image", dff_image)
+                    cv.resizeWindow("DFF Image", dims[0], dims[1])
+                    cv.waitKey(1)
+                    writer.write(dff_image)
+
+            # cap.release()
+            # writer.release()
+            # cv.destroyAllWindows()
+
+    except Exception as e:
+        logging.error(e)
+        cap.release()
+        writer.release()
+        cv.destroyAllWindows()
 
     cap.release()
     writer.release()
