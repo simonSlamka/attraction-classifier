@@ -19,6 +19,7 @@ from termcolor import colored
 import matplotlib.pyplot as plt
 import torch
 from torch.nn import CrossEntropyLoss
+from scipy.stats import entropy
 
 
 
@@ -89,6 +90,16 @@ def get_dupes_by_perceptual_hash(dsDir):
 					dupes.append((path, hashes[hash]))
 	return dupes
 
+def calc_mean_shannon(dsDir):
+	shannons = []
+	for root, dirs, files in os.walk(dsDir):
+		for file in files:
+			if file.endswith((".jpg", ".jpeg", ".png")):
+				path = os.path.join(root, file)
+				img = PILImage.open(path)
+				shannons.append(entropy(img.histogram()))
+	return np.mean(shannons), shannons
+
 for subdir in ["pos", "neg"]:
 	subdirPath = os.path.join(dsDir, subdir)
 	dupes = get_dupes_by_hash(subdirPath)
@@ -105,6 +116,11 @@ for subdir in ["pos", "neg"]:
 					print(f"Removed {dupe[0]}")
 			print(colored(f"Removed {len(dupes)} duplicate images in {subdirPath}", "green"))
 			del dupes
+	meanShannon, shannons = calc_mean_shannon(subdirPath)
+	print(colored(f"Mean Shannon entropy for {subdirPath}: {meanShannon}", "green"))
+	plt.hist(shannons, bins=100)
+	# plt.show()
+
 
 # ds["train"][randrange(0, 2001)]["image"].show() # display a specimen
 print(f"{ds['train'].features}")
