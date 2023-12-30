@@ -50,7 +50,7 @@ for subdir in ["pos", "neg"]:
 				raise ValueError(f"File {file} is not an image")
 
 ds = load_dataset("imagefolder", data_dir=dsDir, split="train") #.cast_column("image", Image(decode=False))
-ds = ds.train_test_split(test_size=0.1, seed=69) # split 'em
+ds = ds.train_test_split(test_size=0.15, seed=69) # split 'em
 
 print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
 
