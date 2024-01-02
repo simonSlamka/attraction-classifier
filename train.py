@@ -50,7 +50,7 @@ for subdir in ["pos", "neg"]:
 				raise ValueError(f"File {file} is not an image")
 
 ds = load_dataset("imagefolder", data_dir=dsDir, split="train") #.cast_column("image", Image(decode=False))
-ds = ds.train_test_split(test_size=0.20, seed=69) # split 'em
+ds = ds.train_test_split(test_size=0.2, seed=69) # split 'em
 
 print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
 
@@ -382,7 +382,7 @@ if len(mismatched) > 0:
 	raise ValueError("Non-(224, 224) images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
 faceDs = load_dataset("imagefolder", data_dir=f"{dsDir}/.faces", split="train")
-faceDs = faceDs.train_test_split(test_size=0.1, seed=69)
+faceDs = faceDs.train_test_split(test_size=0.2, seed=69)
 ds = faceDs
 del faceDs
 
