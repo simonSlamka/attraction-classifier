@@ -50,7 +50,7 @@ for subdir in ["pos", "neg"]:
 				raise ValueError(f"File {file} is not an image")
 
 ds = load_dataset("imagefolder", data_dir=dsDir, split="train") #.cast_column("image", Image(decode=False))
-ds = ds.train_test_split(test_size=0.2, seed=69) # split 'em
+ds = ds.train_test_split(test_size=0.1, seed=69) # split 'em
 
 print(f"Train: {len(ds['train'])} | Test: {len(ds['test'])}") # split sanity check
 
@@ -116,9 +116,9 @@ for subdir in ["pos", "neg"]:
 					print(f"Removed {dupe[0]}")
 			print(colored(f"Removed {len(dupes)} duplicate images in {subdirPath}", "green"))
 			del dupes
-	meanShannon, shannons = calc_mean_shannon(subdirPath)
-	print(colored(f"Mean Shannon entropy for {subdirPath}: {meanShannon}", "green"))
-	plt.hist(shannons, bins=100)
+	# meanShannon, shannons = calc_mean_shannon(subdirPath) # ! not getting shannons for now
+	# print(colored(f"Mean Shannon entropy for {subdirPath}: {meanShannon}", "green"))
+	# plt.hist(shannons, bins=100)
 	# plt.show()
 
 
@@ -344,6 +344,8 @@ if userInput.lower() == "yes":
 				os.makedirs(faceDir) # if not, create it
 			if grab_faces(file, faceDir): # grab faces
 				processedFiles.append(file)
+			else:
+				processedFiles.append(file) # ^ temporarily adding imgs from which faces couldn't be extracted to processedFiles to avoid reprocessing them, since the process is deterministic and will always fail for the same imgs
 
 	if input("Also neg? (yes/no): ").lower() == "yes":
 		for file in tqdm(negFiles, desc="Processing negative imgs"):
@@ -360,7 +362,7 @@ if userInput.lower() == "yes":
 
 totalFaces = [os.path.join(dp, f) for dp, dn, filenames in os.walk(f"{dsDir}/.faces") for f in filenames if f.endswith((".jpg", ".jpeg", ".png"))] # grab all faces for sanity checking
 print(f"Total faces: {len(totalFaces)}")
-print(colored(f"Positive faces: {len([f for f in totalFaces if 'pos' in f])} | Negative faces: {len([f for f in totalFaces if 'neg' in f])} | Class imbalance: {len([f for f in totalFaces if 'pos' in f]) / len([f for f in totalFaces if 'neg' in f])}", "green"))
+print(colored(f"Positive faces: {len([f for f in totalFaces if 'pos' in f])} | Negative faces: {len([f for f in totalFaces if 'neg' in f])} | Class imbalance: {len([f for f in totalFaces if 'pos' in f]) / len([f for f in totalFaces if 'neg' in f]):.2f}", "green"))
 
 if userInput.lower() == "yes":
 	for face in tqdm(totalFaces, desc="Resizing faces"):
@@ -368,9 +370,12 @@ if userInput.lower() == "yes":
 			resize_faces(face, face) # resize faces to 224x224
 			processedFiles.append(face)
 
+try:
 	with open("processed.txt", "a") as file:
 		for item in processedFiles:
 			file.write("%s\n" % item)
+except NameError:
+	pass
 
 if len(totalFaces) < len(totalFiles): # sanity check
 	print("Not all faces were grabbed")
@@ -382,7 +387,7 @@ if len(mismatched) > 0:
 	raise ValueError("Non-(224, 224) images found - !! TRAINING WOULD FAIL, SO ABORTING !!")
 
 faceDs = load_dataset("imagefolder", data_dir=f"{dsDir}/.faces", split="train")
-faceDs = faceDs.train_test_split(test_size=0.2, seed=69)
+faceDs = faceDs.train_test_split(test_size=0.1, seed=69)
 ds = faceDs
 del faceDs
 
@@ -508,9 +513,9 @@ trainingArgs = TrainingArguments(
 	per_device_train_batch_size=16,
 	per_device_eval_batch_size=16,
 	#gradient_accumulation_steps=8, # defaults to 1
-	weight_decay=0.02,
+	weight_decay=0.05,
 	num_train_epochs=10,
-	warmup_ratio=0.1,
+	warmup_ratio=0.05,
 	lr_scheduler_type="linear", # "polynomial", "constant_with_warmup", "constant", "linear", "cosine"
 	seed=69,
 	save_steps=150,
@@ -519,8 +524,8 @@ trainingArgs = TrainingArguments(
 	save_total_limit=3,
 	logging_steps=20,
 	load_best_model_at_end=True,
-	metric_for_best_model="loss",
-	greater_is_better=False,
+	metric_for_best_model="accuracy",
+	greater_is_better=True,
 	report_to=["wandb", "tensorboard"],
 	push_to_hub=True,
 	hub_model_id="attraction-classifier"
