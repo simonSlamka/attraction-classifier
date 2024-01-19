@@ -40,5 +40,5 @@ class AttractionClassifier:
 
 if __name__ == "__main__":
     attr = AttractionClassifier()
-    result, _ = attr.classify_image("Screenshot from 2023-12-18 02-11-31.png")
+    result, _ = attr.classify_image("emi.jpg")
     print(result[0])
