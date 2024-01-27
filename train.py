@@ -547,5 +547,6 @@ trainer = Trainer(
 	callbacks=[earlyPullOut]
 )
 
+torch.cuda.empty_cache()
 trainer.train()
 trainer.push_to_hub()
