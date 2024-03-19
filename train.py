@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import torch
 from torch.nn import CrossEntropyLoss
 from scipy.stats import entropy
+from colorama import Style, Fore
 
 
 
@@ -512,17 +513,20 @@ trainingArgs = TrainingArguments(
 	learning_rate=5e-5,
 	per_device_train_batch_size=32,
 	per_device_eval_batch_size=32,
-	#gradient_accumulation_steps=8, # defaults to 1
-	weight_decay=0.08,
-	num_train_epochs=15,
+	gradient_accumulation_steps=16, # defaults to 1
+	gradient_checkpointing=False,
+	weight_decay=0.15,
+	num_train_epochs=25,
 	warmup_ratio=0.05,
-	lr_scheduler_type="linear", # "polynomial", "constant_with_warmup", "constant", "linear", "cosine"
+	fp16=True,
+	# optim="adafactor",
+	lr_scheduler_type="cosine", # "polynomial", "constant_with_warmup", "constant", "linear", "linear"
 	seed=69,
-	save_steps=150,
-	eval_steps=150,
+	eval_steps=15,
+	save_steps=15,
 	save_safetensors=True,
 	save_total_limit=3,
-	logging_steps=25,
+	logging_steps=10,
 	load_best_model_at_end=True,
 	metric_for_best_model="accuracy",
 	greater_is_better=True,
@@ -548,5 +552,6 @@ trainer = Trainer(
 )
 
 torch.cuda.empty_cache()
-trainer.train()
-trainer.push_to_hub()
+if input(f"{Fore.YELLOW}Init training?{Style.RESET_ALL} ... ") == "y":
+	trainer.train()
+	trainer.push_to_hub()

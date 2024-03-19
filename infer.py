@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 from face_grab import FaceGrabber
 import logging
+from deprecated import deprecated
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,6 +16,7 @@ class AttractionClassifier:
         self.processor = ViTImageProcessor.from_pretrained("ongkn/attraction-classifier")
         self.pipe = pipeline("image-classification", model=self.model, feature_extractor=self.processor)
 
+    @deprecated
     def classify_image(self, image_path, bCentralCrop=False):
         image = Image.open(image_path).convert("RGB")
         if bCentralCrop:
@@ -40,5 +42,5 @@ class AttractionClassifier:
 
 if __name__ == "__main__":
     attr = AttractionClassifier()
-    result, _ = attr.classify_image("emi.jpg")
+    result, _ = attr.classify_image("faten.png")
     print(result[0])
