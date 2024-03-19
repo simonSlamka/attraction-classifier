@@ -1,9 +1,11 @@
-from transformers import pipeline, ViTForImageClassification, ViTImageProcessor
+from transformers import ViTForImageClassification, ViTImageProcessor
 import numpy as np
 from PIL import Image
 from face_grab import FaceGrabber
 import logging
-from deprecated import deprecated
+from torch.nn.functional import softmax
+from torchvision import transforms
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -14,9 +16,7 @@ class AttractionClassifier:
         self.faceGrabber = FaceGrabber()
         self.model = ViTForImageClassification.from_pretrained("ongkn/attraction-classifier")
         self.processor = ViTImageProcessor.from_pretrained("ongkn/attraction-classifier")
-        self.pipe = pipeline("image-classification", model=self.model, feature_extractor=self.processor)
 
-    @deprecated
     def classify_image(self, image_path, bCentralCrop=False):
         image = Image.open(image_path).convert("RGB")
         if bCentralCrop:
@@ -35,8 +35,15 @@ class AttractionClassifier:
             logging.warning("No face detected")
             return None
         face = Image.fromarray(face)
-        result = self.pipe(face)
+        face = face.resize((224, 224))
+        face = transforms.ToTensor()(face)
         # face.show()
+        logits = self.model(face.unsqueeze(0)).logits
+        probs = softmax(logits, dim=1)
+        topIdx = logits.cpu()[0, :].detach().numpy().argsort()[-1]
+        topClass = self.model.config.id2label[topIdx]
+        topScore = probs[0, topIdx].item()
+        result = [(topClass, topScore)]
         return result, face
 
 
