@@ -43,7 +43,7 @@ class AttractionClassifier:
         topIdx = logits.cpu()[0, :].detach().numpy().argsort()[-1]
         topClass = self.model.config.id2label[topIdx]
         topScore = probs[0, topIdx].item()
-        result = [(topClass, topScore)]
+        result = [{"label": topClass, "score": topScore}]
         return result, face
 
 
